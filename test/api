@@ -1,0 +1,4 @@
+//curl -X POST 127.0.0.1:3000/finesse/api/User/840000009 -d "<User><extension>3000</extension><state>NOT_READY</state></User>" -H "Content-Type: 
+
+http://192.168.0.24:3000/finesse/api/SystemInfo
+
