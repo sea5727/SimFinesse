@@ -1,0 +1,25 @@
+<html>
+
+<head>
+    SystemInfo
+</head>
+
+<body>
+<script src="//code.jquery.com/jquery.min.js"></script>
+<script>
+    $(function () {
+        $('#button1').click(function () {
+            if ($(this).html() == '접기') {
+                $(this).html('펼치기');
+            }
+            else {
+                $(this).html('접기');
+            }
+        });
+    });
+</script>
+
+<button id='button1'>접기</button>
+</body>
+
+</html>

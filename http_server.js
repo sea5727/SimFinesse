@@ -3,14 +3,29 @@ const express = require('express');
 const app = express();
 const xmlParser = require('express-xml-bodyparser');
 
+console.log('__dirname' , __dirname)
+app.set('views', [__dirname + '/views', './finesse/views']);
+app.set('view engine', 'ejs');
+app.engine('html', require('ejs').renderFile);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(xmlParser());
 
 
 app.get('/', (req, res) => {
-    res.send('Hello World!\n');
+    res.render('index')
 });
+
+app.use('/finesse/views/SystemInfo', require('./finesse/views/SystemInfo'))
+
+app.get('/User' , (req,res) => {
+    res.render('index')
+})
+
+app.get('/SystemInfo' , (req,res) => {
+    res.render('index')
+})
 
 app.post('/', (req, res) => {
     res.send('Hello World post!\n');
