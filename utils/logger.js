@@ -1,15 +1,16 @@
-const fs = require("fs");
-const winston = require("winston");
-const logDir = "log";
+const fs = require("fs")
+const winston = require("winston")
+const winston_daily_rotate_file = require("winston-daily-rotate-file")
+const logDir = "log"
 
 if (!fs.existsSync(logDir)) {
-    fs.mkdirSync(logDir);
+    fs.mkdirSync(logDir)
 }
 
-//const tsFormat = () => (new Date()).toLocaleTimeString();
+//const tsFormat = () => (new Date()).toLocaleTimeString()
 function timeStampFormat() {
-    return moment().format('YYYY-MM-DD HH:mm:ss.SSS ZZ');
-};
+    return moment().format('YYYY-MM-DD HH:mm:ss.SSS ZZ')
+}
 
 module.exports = logger = winston.createLogger({
     transports: [
@@ -22,12 +23,12 @@ module.exports = logger = winston.createLogger({
             ),
             level: 'debug'
         }),
-        new (require("winston-daily-rotate-file"))({
-            filename: `${logDir}/-results.log`,
+        new (winston_daily_rotate_file)({
+            filename: `${logDir}/SimFinesse.log`,
             format: winston.format.combine(
                 winston.format.timestamp(),
                 winston.format.simple(),
             )
         }),
     ]
-});
+})

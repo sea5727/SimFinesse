@@ -1,6 +1,6 @@
 const xmpp = require('node-xmpp-server');
 const logger = require('./utils/logger');
-// var session_router = require('./login-session');
+const simMemory = require('./memory');
 
 
 
@@ -29,8 +29,10 @@ let listen = function (port) {
         });
 
         client.on('authenticate', (opts, cb) => {
-            logger.info('[XMPP] authenticate from client');
             cb(null, opts);
+            let finesse_id = client.jid.local
+            simMemory.set_client(finesse_id, client);
+            logger.info('[XMPP] authenticate from client finesse_id : ', finesse_id);
             // session_router.set_client(client.jid.local, client); // key : FnsLoginId, value : xmpp_client
         })
 
@@ -49,8 +51,6 @@ let listen = function (port) {
                 stanza.attrs.from = stanza.attrs.to
                 stanza.attrs.to = from
                 client.send(stanza)
-
-
             }
         });
 

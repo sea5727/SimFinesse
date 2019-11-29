@@ -1,0 +1,32 @@
+{
+  "name": "simfinesse",
+  "version": "1.0.0",
+  "description": "피네스 시뮬레이터.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sea5727/SimFinesse.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sea5727/SimFinesse/issues"
+  },
+  "homepage": "https://github.com/sea5727/SimFinesse#readme",
+  "dependencies": {
+    "ejs": "^3.0.1",
+    "express": "^4.17.1",
+    "express-xml-bodyparser": "^0.3.0",
+    "fast-xml-parser": "^3.15.0",
+    "he": "^1.2.0",
+    "node-xmpp-server": "^2.2.7",
+    "winston": "^3.2.1",
+    "winston-daily-rotate-file": "^4.3.0"
+  }
+}
