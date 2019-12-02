@@ -4,7 +4,9 @@ const parser_j2x = require('../../../utils/parser-j2x')
 const dateFormat = require('dateformat')
 const parser_xj2 = require('../../../utils/parser-x2j')
 const builder = require('xmlbuilder')
+const UserFsm = require('./UserFsm')
 const express = require('express')
+const FinesseMemory = require('../../../memory');
 const router = express.Router()
 
 //curl -X GET 127.0.0.1:3000/finesse/api/User/840000009
@@ -45,6 +47,9 @@ router.put('/:id', (req, res) => {
                 if(dataObj.User.state != 'LOGOUT'){
                     return res.status(404).send()//todo 실패 응답
                 }
+                User = new UserFsm()
+                User.InitXmppSession('xmppSessionTest').InitUserObj(dataObj).CreateUserFsm()
+                // User.InitXmppSession(FinesseMemory.get_client(req.body.user.extension[0]))
                 dataObj.User.extension = req.body.user.extension[0]
                 dataObj.User.state = 'NOT_READY'
                 dataObj.User.stateChangeTime = dateFormat(new Date(), "UTC:h:MM:ss TT Z")
@@ -69,9 +74,10 @@ router.put('/:id', (req, res) => {
                     // 이부분에서 xmpp user event 내려줘야 할듯... fsm_state..??
                     let dataXml = parser_j2x.parse(dataObj) 
                     logger.debug(`[XML] url: ${req.originalUrl} xml : ${dataXml}`)
-                    res.status(202)
-                    res.contentType('Application/xml')
-                    return res.send()
+                    res.status(202).contentType('Application/xml').send()
+                    User.GetUser().send(req.body.user.state[0])
+                    return
+
                 }
             })
 

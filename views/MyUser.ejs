@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>SimFinesse</title>
+    <link rel="stylesheet" href="stylesheets/style.css" />
+</head>
+
+<body>
+    <% let myTest = user %>
+    <script>
+        function getObjectMember(obj){
+            document.write(`<h1>${obj}</h1>`)
+            for (var key in obj) {
+                document.write(`<h1>for loop </h1>`)
+                //if (typeof obj[key] == 'object') {
+                //    document.write(`<h1> key : ${key} -> </h1>`)
+                //    testfunc(obj[key])
+                //    document.write(`<h1> <--  </h1>`)
+                //}
+                //else{
+                //    document.write(`<h1> key : ${key}, value : ${obj[key]}</h1>`)
+                //}
+            }
+            document.write(`<h1>end</h1>`)
+        }
+        document.write(`<h1>start</h1>`)
+        myTest = <%= user %>
+        document.write(`${myTest}`)
+        document.write(`${user}`)
+        
+        getObjectMember(user)
+
+    </script>
+    <script>
+        var test = 'test'
+        document.write('<h1>' + test + '</h1>')
+    </script>
+    <!-- <script>
+        for(var key in user.User){
+            document.write(`<td>${key} : ${user.User[key]}<td>`)
+        }
+    </script> -->
+    
+    <%- JSON.stringify(myTest, null, 4) %>
+    <% for(var key in user.User){ %>
+        <td><%= user.User[key] %></td>
+    <% } %>
+
+</body>
+
+</html>

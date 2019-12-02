@@ -1,6 +1,6 @@
 const xmpp = require('node-xmpp-server');
 const logger = require('./utils/logger');
-const simMemory = require('./memory');
+const FinesseMemory = require('./memory');
 
 
 
@@ -30,7 +30,7 @@ let listen = function (port) {
 
         client.on('authenticate', (opts, cb) => {
             let finesse_id = opts.username
-            simMemory.set_client(finesse_id, client);
+            FinesseMemory.set_client(finesse_id, client);
             logger.info('[XMPP] authenticate from client finesse_id : ', finesse_id);
             // 로그인 처리 인듯..? 
             // opts.username

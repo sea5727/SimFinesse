@@ -8,7 +8,7 @@ router.get('/' , (req,res) => {
             res.send(500)
             return
         }
-        res.render('SystemInfo', { data : JSON.parse(data.toString()) } )
+        return res.render('SystemInfo', { data : JSON.parse(data.toString()) } )
     })
     
 })

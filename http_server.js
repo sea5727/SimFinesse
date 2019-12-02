@@ -2,7 +2,7 @@ const logger = require('./utils/logger');
 const express = require('express');
 const app = express();
 const xmlParser = require('express-xml-bodyparser');
-
+app.locals.util = require('util')
 console.log('__dirname' , __dirname)
 app.set('views', [__dirname + '/views', './finesse/views']);
 app.set('view engine', 'ejs');
@@ -18,6 +18,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/finesse/views/SystemInfo', require('./finesse/views/SystemInfo'))
+app.use('/finesse/views/User', require('./finesse/views/User'))
 
 app.get('/User' , (req,res) => {
     res.render('index')
