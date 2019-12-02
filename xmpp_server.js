@@ -29,10 +29,13 @@ let listen = function (port) {
         });
 
         client.on('authenticate', (opts, cb) => {
-            cb(null, opts);
-            let finesse_id = client.jid.local
+            let finesse_id = opts.username
             simMemory.set_client(finesse_id, client);
             logger.info('[XMPP] authenticate from client finesse_id : ', finesse_id);
+            // 로그인 처리 인듯..? 
+            // opts.username
+            // opts.password
+            cb(null, opts);
             // session_router.set_client(client.jid.local, client); // key : FnsLoginId, value : xmpp_client
         })
 
