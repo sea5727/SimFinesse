@@ -33,8 +33,9 @@ app.post('/', (req, res) => {
 
 
 
-app.use('/finesse/api/SystemInfo', require('./finesse/api/SystemInfo'));
-app.use('/finesse/api/User', require('./finesse/api/User'));
+
+// app.use('/finesse/api/SystemInfo', require('./finesse/api/SystemInfo'));
+app.use('/finesse/api', require('./finesse/api'));
 
 var listen = function (port) {
     app.listen(port, () => {

@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/sea5727/SimFinesse#readme",
   "dependencies": {
+    "dateformat": "^3.0.3",
     "ejs": "^3.0.1",
     "express": "^4.17.1",
     "express-xml-bodyparser": "^0.3.0",
@@ -27,6 +28,7 @@
     "he": "^1.2.0",
     "node-xmpp-server": "^2.2.7",
     "winston": "^3.2.1",
-    "winston-daily-rotate-file": "^4.3.0"
+    "winston-daily-rotate-file": "^4.3.0",
+    "xmlbuilder": "^13.0.2"
   }
 }
