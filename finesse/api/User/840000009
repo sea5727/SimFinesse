@@ -2,12 +2,11 @@
     "User": {
         "dialogs": "/finesse/api/User/840000009/Dialog",
         "extension": "3003",
-        "firstName": "t",
         "lastName": "9",
         "loginId": "840000009",
         "loginName": "840000009",
         "mediaType": "1",
-        "pendingState": null,
+        "pendingState": "",
         "roles": {
             "role": "Agent"
         },
@@ -15,7 +14,7 @@
             "wrapUpOnIncoming": "REQUIRED"
         },
         "state": "NOT_READY",
-        "stateChangeTime": "3:31:32 PM UTC",
+        "stateChangeTime": "3:31:32",
         "teamId": "1",
         "teamName": "Default",
         "uri": "/finesse/api/User/840000009"
