@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>SimFinesse</title>
+    <link rel="stylesheet" href="stylesheets/style.css" />
+</head>
+
+<body>
+    <% function inputObjData(level, obj){ %>
+        <% let blank = ' ' %>
+        <% let test = 'test' %>
+        <% let test2 = 'test2' %>
+        <%= test + test2 %>{ <%= test %>
+        }
+        <% for(let b = 0 ; b < level ; b++ ){ %>
+            <% blank += '       1' %>
+        <% } %>
+        <% for(let i in obj){ %>
+            <% if(obj[i].constructor == Object){ %>
+                <% if(obj.constructor == Array){ %>
+                    <%= blank %>{
+                <% } else { %>
+                    <%= blank + i %>{
+                <% } %>
+                <% inputObjData(level + 1, obj[i]) %>
+                <%= blank + i %>},
+            <% } else if(obj[i].constructor == Array){ %>
+                <%= blank + i %>[
+                <%= blank %>],
+            <% } else {%>
+                <%= blank + i %> : <%= obj[i] %>,
+            <% } %>
+        <% } %>
+    <% } %>
+    <% inputObjData(5, user) %>
+    <input type="text" value="test">
+</body>
+
+</html>

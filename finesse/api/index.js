@@ -5,6 +5,7 @@ const express = require('express')
 const router = express.Router();
 
 router.use('/User', require('./User'))
+router.use('/Dialog', require('./Dialog'))
 
 router.get('/:query', (req, res) => {
     logger.info(`[HTTP] ${req.originalUrl}`)

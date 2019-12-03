@@ -30,6 +30,6 @@
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^4.3.0",
     "xmlbuilder": "^13.0.2",
-    "xstate": "^4.7.1"
+    "xstate": "^4.7.2"
   }
 }

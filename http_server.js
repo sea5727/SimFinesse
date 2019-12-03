@@ -19,6 +19,7 @@ app.get('/', (req, res) => {
 
 app.use('/finesse/views/SystemInfo', require('./finesse/views/SystemInfo'))
 app.use('/finesse/views/User', require('./finesse/views/User'))
+app.use('/finesse/views/Dialog', require('./finesse/views/Dialog'))
 
 app.get('/User' , (req,res) => {
     res.render('index')
