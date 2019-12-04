@@ -1,14 +1,82 @@
 <!DOCTYPE HTML>
 <html lang="ko">
-
+        
 <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="http://192.168.0.205:3000/public/xml2json.js"></script>
     <meta charset="UTF-8">
     <title>SimFinesse</title>
-    <link rel="stylesheet" href="stylesheets/style.css" />
+    <!-- <link rel="stylesheet" href="stylesheets/style.css" /> -->
 </head>
 
 <body>
-    <input type="submit" value="호생성">
+    <script>
+        function insertAfter(newNode, referenceNode) {
+            referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+        }
+        fetch('http://192.168.0.205:3000/finesse/api/Dialog/156494657').then((res) => {
+            res.text().then((value) => {
+                xml = parseXml(value)
+                json = xml2json(xml, ' ')
+                obj = JSON.parse(json)
+                var dialogDiv = document.createElement("div")
+                getObjectParam(0, obj, dialogDiv , '')
+                var currentDiv = document.getElementById("dialogSubmit");
+                insertAfter(dialogDiv, currentDiv)
+                currentDiv.parentNode.insertBefore(dialogDiv, currentDiv.nextSibling)
+                //document.body.insertBefore(dialogDiv, currentDiv)
+            })
+        })
+
+    </script>
+    <script>
+        function test(){
+            var login = {
+                act : "login",
+                userid : "홍길동",
+            }
+
+            console.log(JSON.stringify(login))
+
+            var result = {}
+            var formArray = $("#dialogForm").serializeArray()
+            for (let i = 0 ; i < formArray.length ; i++){
+                var names = (formArray[i].name).split('.')
+                for(let j = 0 ; j < names.length ; j++){
+                    if(result[names[j]] == undefined){
+                    }
+                }
+                console.log(names)
+            }
+
+
+            //document.form.json.value = JSON.stringify(login)
+            //document.form.submit()
+            
+        }
+    </script>
+    <form id="select">
+
+    </form>
+    <form id="testf"> 
+        <input type="text" name="title"/> 
+        <input type="text" name="statudents[0][name]"/> 
+        <input type="text" name="statudents[0][age]"/> 
+        <input type="text" name="statudents[1][name]"/> 
+        <input type="text" name="statudents[1][age]"/> 
+        <input type="text" name="statudents[2][name]"/> 
+        <input type="text" name="statudents[2][age]"/> 
+    </form>
+
+
+
+    <!-- http://192.168.0.205:3000/finesse/api/Dialog -->
+    <form id='dialogForm' action='http://192.168.0.205:3000/finesse/api/Dialog' method="POST" name="form">
+        <input type="button" value="보내기버튼" onclick="test()">
+        <input id="dialogSubmit" type="submit" value="등록" onclick="test()">
+        <input type="hidden" name="json" value="">
+    </form>
+    
 </body>
 
 </html>

@@ -1,13 +1,17 @@
 const logger = require('./utils/logger');
 const express = require('express');
-const app = express();
 const xmlParser = require('express-xml-bodyparser');
 const bodyParser = require('body-parser')
+
+const app = express();
 app.locals.util = require('util')
+app.use('/public', express.static('public'))
+
 console.log('__dirname' , __dirname)
 app.set('views', [__dirname + '/views', './finesse/views']);
 app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
+
 
 app.use(bodyParser .json());
 app.use(bodyParser .urlencoded({ extended: true }));
@@ -17,6 +21,8 @@ app.use(xmlParser());
 app.get('/', (req, res) => {
     res.render('index')
 });
+
+
 
 app.use('/finesse/views/SystemInfo', require('./finesse/views/SystemInfo'))
 app.use('/finesse/views/User', require('./finesse/views/User'))

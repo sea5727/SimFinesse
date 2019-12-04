@@ -8,6 +8,10 @@ const express = require('express')
 const FinesseMemory = require('../../../memory');
 const router = express.Router()
 
+router.post('/', (req, res) => {
+    console.log(req)
+})
+
 router.get('/:id', (req, res) => {
     logger.info(`[HTTP] ${req.method} ${req.originalUrl} : ${JSON.stringify(req.body)}`)
 
