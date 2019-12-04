@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 
 const app = express();
 app.locals.util = require('util')
+app.use('/public', express.static('bower_components/jquery-serialize-object'))
 app.use('/public', express.static('public'))
 
 console.log('__dirname' , __dirname)

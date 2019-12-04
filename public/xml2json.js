@@ -193,47 +193,64 @@ function getObjectParam(level, obj, dialogDiv, parentName) {
             dialogDiv.innerHTML += br
             var newContent = document.createTextNode(`{`)
             dialogDiv.appendChild(newContent)
-            dialogDiv.appendChild(document.createElement('p'))
-            console.log(`${blank}{`)
+            dialogDiv.appendChild(document.createElement('br'))
+            //console.log(`${blank}}`)
          }
          else {
             dialogDiv.innerHTML += br
             var newContent = document.createTextNode(`${param}{`)
             dialogDiv.appendChild(newContent)
-            dialogDiv.appendChild(document.createElement('p'))
-            console.log(`${blank}${param}{`)
+            dialogDiv.appendChild(document.createElement('br'))
+            //console.log(`${blank}${param}{`)
          }
          if(parentName.length == 0){
             getObjectParam(level + 1, obj[param], dialogDiv, `${param}`)
          }
          else {
-            // getObjectParam(level + 1, obj[param], dialogDiv, `${parentName}`)
-            getObjectParam(level + 1, obj[param], dialogDiv, `${parentName}.${param}`)
+            //getObjectParam(level + 1, obj[param], dialogDiv, `${parentName}`)
+            getObjectParam(level + 1, obj[param], dialogDiv, `${parentName}[${param}]`)
          }
          
          dialogDiv.innerHTML += br
          var newContent = document.createTextNode(`},`)
          dialogDiv.appendChild(newContent)
-         dialogDiv.appendChild(document.createElement('p'))
-         console.log(`${blank}},`)
+         dialogDiv.appendChild(document.createElement('br'))
+         //console.log(`${blank}},`)
       }
       else if ((!!obj[param]) && (obj[param].constructor === Array)) {
-         dialogDiv.innerHTML += br
+         let arrayDiv = document.createElement('div')
+         arrayDiv.setAttribute('id', `${parentName}[${param}]`)
+         // arrayDiv.innerHTML('test')
          var newContent = document.createTextNode(`${param} [`)
+         let plusBtn = document.createElement('input')
+         plusBtn.setAttribute('type' , 'button')
+         plusBtn.setAttribute('name', `${param}_plusBtn`)
+         plusBtn.setAttribute('onclick', `plusBtn('${parentName}[${param}]')`)
+         plusBtn.setAttribute('value', '+')
+         let minusBtn = document.createElement('input')
+         minusBtn.setAttribute('type' , 'button')
+         minusBtn.setAttribute('name', `${param}_minusBtn`)
+         minusBtn.setAttribute('onclick', `minusBtn(${param}_minusBtn)`)
+         minusBtn.setAttribute('value', '-')
+
+         dialogDiv.innerHTML += br
          dialogDiv.appendChild(newContent)
-         dialogDiv.appendChild(document.createElement('p'))
-         console.log(`${blank}${param} [`)
+         dialogDiv.appendChild(plusBtn)
+         dialogDiv.appendChild(minusBtn)
+         dialogDiv.appendChild(arrayDiv)
+         dialogDiv.appendChild(document.createElement('br'))
+         //console.log(`${blank}${param} [`)
          if(parentName.length == 0){
             getObjectParam(level + 1, obj[param], dialogDiv, `${param}`)
          }
          else {
-            getObjectParam(level + 1, obj[param], dialogDiv, `${parentName}.${param}`)
+            getObjectParam(level + 1, obj[param], dialogDiv, `${parentName}[${param}]`)
          }
          dialogDiv.innerHTML += br
          var newContent = document.createTextNode(` ],`)
          dialogDiv.appendChild(newContent)
-         dialogDiv.appendChild(document.createElement('p'))
-         console.log(`${blank}],`)
+         dialogDiv.appendChild(document.createElement('br'))
+         //console.log(`${blank}],`)
       }
       else {
          dialogDiv.innerHTML += br
@@ -242,21 +259,30 @@ function getObjectParam(level, obj, dialogDiv, parentName) {
          input.type = 'text'
          if(parentName.length  == 0){
             input.setAttribute('name', `${param}`)
+            input.setAttribute('id', `${param}`)
          }
          else{
-            input.setAttribute('name', `${parentName}.${param}`)
+            input.setAttribute('name', `${parentName}[${param}]`)
+            input.setAttribute('id', `${parentName}[${param}]`)
          }
-         input.setAttribute('value', `${obj[param]}`)
+         //if(obj[param] == 'null'){
+         if(typeof obj[param] == 'object' || obj[param] == 'null'){
+            // input.setAttribute('value', null)
+         }
+         else {
+            input.setAttribute('value', `${obj[param]}`)
+         }
+
          input.setAttribute('size', `50`)
          dialogDiv.appendChild(newContent)
          dialogDiv.appendChild(input)
-         dialogDiv.appendChild(document.createElement('p'))
-         console.log(`${blank}${param} : ${obj[param]},`)
+         dialogDiv.appendChild(document.createElement('br'))
+         //console.log(`${blank}${param} : ${obj[param]},`)
       }
    }
 }
 // function getData() {
-//    fetch('http://192.168.0.205:3000/finesse/api/DialogFormat').then((res) => {
+//    fetch('http://192.168.0.25:3000/finesse/api/DialogFormat').then((res) => {
 //       res.text().then((value) => {
 
 //          objDialog = JSON.parse(value)
