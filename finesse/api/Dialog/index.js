@@ -20,6 +20,7 @@ router.post('/:id', (req, res) => {
             if(err){
                 return res.status(400).send({messgae : 'create fail'})
             }
+            
             return res.redirect(301, 'http://192.168.0.25:3000/')    
         })
     })

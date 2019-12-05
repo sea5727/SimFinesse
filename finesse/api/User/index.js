@@ -48,19 +48,20 @@ router.put('/:id', (req, res) => {
                     return res.status(404).send()//todo 실패 응답
                 }
                 User = new UserFsm()
-                User.InitXmppSession('xmppSessionTest').InitUserObj(dataObj).CreateUserFsm()
-                // User.InitXmppSession(FinesseMemory.get_client(req.body.user.extension[0]))
+                xmpp_session = FinesseMemory.get_xmpp(req.params.id)
+                User.InitXmppSession(xmpp_session).CreateUserFsm()
+                FinesseMemory.set_user(req.body.user.extension[0], User)
+                // User.InitXmppSession(FinesseMemory.get_xmpp(req.body.user.extension[0]))
                 dataObj.User.extension = req.body.user.extension[0]
                 dataObj.User.state = 'NOT_READY'
                 dataObj.User.stateChangeTime = dateFormat(new Date(), "UTC:h:MM:ss TT Z")
             }
             else if(req.body.user.state[0] == 'LOGOUT'){
-                dataObj.User.extension = req.body.user.extension[0]
-                dataObj.User.state = null
+                dataObj.User.state = 'LOGOUT'
+                dataObj.User.extension = null
                 dataObj.User.stateChangeTime = dateFormat(new Date(), "UTC:h:MM:ss TT Z")
             }
             else {
-                dataObj.User.extension = req.body.user.extension[0]
                 dataObj.User.state = req.body.user.state[0]
                 dataObj.User.stateChangeTime = dateFormat(new Date(), "UTC:h:MM:ss TT Z")
             }
@@ -75,8 +76,12 @@ router.put('/:id', (req, res) => {
                     let dataXml = parser_j2x.parse(dataObj) 
                     logger.debug(`[XML] url: ${req.originalUrl} xml : ${dataXml}`)
                     res.status(202).contentType('Application/xml').send()
-                    User.GetUser().send(req.body.user.state[0])
-                    return
+                    
+                    logger.debug('send Data : ', dataObj)
+                    logger.debug('send dataObj.User.state : ', req.body.user.state[0])
+                    User = FinesseMemory.get_user(dataObj.User.extension).InitUserObj(dataObj)
+                    User.GetXmppSession().send(req.body.user.state[0])
+                    FinesseMemory.set_user(dataObj.User.extension, User)
 
                 }
             })

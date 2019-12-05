@@ -30,13 +30,13 @@ let listen = function (port) {
 
         client.on('authenticate', (opts, cb) => {
             let finesse_id = opts.username
-            FinesseMemory.set_client(finesse_id, client);
+            FinesseMemory.set_xmpp(finesse_id, client);
             logger.info('[XMPP] authenticate from client finesse_id : ', finesse_id);
             // 로그인 처리 인듯..? 
             // opts.username
             // opts.password
             cb(null, opts);
-            // session_router.set_client(client.jid.local, client); // key : FnsLoginId, value : xmpp_client
+            // session_router.set_xmpp(client.jid.local, client); // key : FnsLoginId, value : xmpp_client
         })
 
         client.on('stanza', (stanza) => {

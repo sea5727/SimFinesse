@@ -1,12 +1,8 @@
-const logger = require('../../../utils/logger')
 const { Machine, interpret } = require('xstate');
 const builder = require('xmlbuilder');
- 
-// Stateless machine definition
-// machine.transition(...) is a pure function used by the interpreter.
 
-const UserMachineConfig = {
-    id: 'User',
+const DialogMachineConfig = {
+    id: 'Dialog',
     initial: 'LOGOUT',
     states: {
         LOGOUT: {
@@ -40,15 +36,10 @@ const UserMachineConfig = {
 
 const UserEventFormat = (UserObj) => {
     let UserID = UserObj.User.loginId;
-
-    var userFormat = JSON.parse(JSON.stringify(UserObj));
-    Object.defineProperty(userFormat, 'user', Object.getOwnPropertyDescriptor(userFormat, 'User'));
-    delete userFormat['User'];
-
     let update = {
         update: {
             data: {
-                '#text': userFormat
+                '#text': UserObj
             },
             event: { '#text': 'PUT' },
             requestId: { '#text': '' },
@@ -112,12 +103,8 @@ class UserStateObject{
     }
     EventCallback(state){
         if(state.value == 'LOGOUT') return
-            console.log(state.value)
-        if(state.context.xmppSession != null){
-                let userEvent = UserEventFormat(state.context.UserObj)
-                logger.debug(userEvent)
-                state.context.xmppSession.send(userEvent)
-            }
+        console.log(state.value)
+        console.log(UserEventFormat(state.context.UserObj))
     }
     GetXmppSession(){
         return this.User

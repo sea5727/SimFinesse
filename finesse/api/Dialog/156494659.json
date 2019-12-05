@@ -4,7 +4,7 @@
         "fromAddress": "01073647790",
         "id": "156494657",
         "mediaProperties": {
-            "DNIS": "",
+            "DNIS": "3005",
             "callType": "PREROUTE_ACD_IN",
             "callvariables": {
                 "CallVariable": [
@@ -34,7 +34,7 @@
                     },
                     {
                         "name": "callVariable7",
-                        "value": "15"
+                        "value": "18"
                     },
                     {
                         "name": "callVariable8",
