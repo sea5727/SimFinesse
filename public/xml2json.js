@@ -281,26 +281,3 @@ function getObjectParam(level, obj, dialogDiv, parentName) {
       }
    }
 }
-// function getData() {
-//    fetch('http://192.168.0.25:3000/finesse/api/DialogFormat').then((res) => {
-//       res.text().then((value) => {
-
-//          objDialog = JSON.parse(value)
-//          var dialogDiv = document.createElement("div")
-//          dialogDiv.id = 'DialogDiv'
-//          getObjectParam(0, objDialog, dialogDiv)
-//          var currentDiv = document.getElementById("div1");
-//          document.body.insertBefore(dialogDiv, currentDiv)
-//       })
-//    })
-// }
-// window.onload = function () {
-//    var testDiv = document.createElement("div")
-//    var newContent = document.createTextNode("1환영합니다!")
-//    testDiv.appendChild(newContent)
-
-//    var currentDiv = document.getElementById("div1");
-//    document.body.insertBefore(testDiv, currentDiv)
-//    getData()
-// }
-

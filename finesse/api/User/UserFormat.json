@@ -15,7 +15,7 @@
         "settings" : {
             "wrapUpOnIncoming" : null
         },
-        "state" : null,
+        "state" : "LOGOUT",
         "stateChangeTime" : null,
         "teamId" : null,
         "teamName" : null,

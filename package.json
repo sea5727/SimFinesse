@@ -20,7 +20,9 @@
   },
   "homepage": "https://github.com/sea5727/SimFinesse#readme",
   "dependencies": {
+    "body-parser-xml": "^1.1.0",
     "dateformat": "^3.0.3",
+    "deepmerge": "^4.2.2",
     "ejs": "^3.0.1",
     "express": "^4.17.1",
     "express-async-handler": "^1.1.4",

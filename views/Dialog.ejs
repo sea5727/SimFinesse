@@ -4,6 +4,8 @@
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script type="text/javascript" src="http://192.168.0.25:3000/public/xml2json.js"></script>
+    <script type="text/javascript" src="http://192.168.0.25:3000/public/json2xml.js"></script>
+    <script type="text/javascript" src="http://192.168.0.25:3000/public/finesseRestApi.js"></script>
     <script type="text/javascript" src="http://192.168.0.25:3000/public/jquery.serialize-object.js"></script>
     <meta charset="UTF-8">
     <title>SimFinesse</title>
@@ -12,7 +14,7 @@
 
 <body>
     <script>
-        window.onload = GetDialogUri('format')
+        window.onload = GetUri_SetElement(`http://192.168.0.25:3000/finesse/api/Dialog/DialogFormat`)
         function plusBtn(id){
             //if(id == 'Dialog[mediaProperties][callvariables][CallVariable]'){
             //    let br = ''
@@ -30,113 +32,42 @@
             //console.log(param.name)
         }
         async function sendCreate(){
-            let formObject = $("#dialogForm").serializeObject()
-            if(formObject.Dialog.id == null){
-                alert('dialog id 는필수')
-                return
-            }
-            let dialogId = formObject.Dialog.id
+            let formObject = $("#mainForm").serializeObject()
+            let id = formObject.Dialog.id
             
-            await PostPutDialogUri(dialogId, 'post', formObject)
+            await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/Dialog/${id}`, 'post', formObject)
         }
         async function sendUpdate(){
-            let formObject = $("#dialogForm").serializeObject()
-            if(formObject.Dialog.id == null){
-                alert('dialog id 는필수')
-                return
-            }
-            let dialogId = formObject.Dialog.id
+            let formObject = $("#mainForm").serializeObject()
+            let id = formObject.Dialog.id
             
-            await PostPutDialogUri(dialogId, 'put', formObject)
+            await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/Dialog/${id}`, 'put', formObject)
         }
-        async function sendSelect(param){
-            if(isNaN(param) == true){
+        async function sendDelete(id){
+            if(isNaN(id) == true){
                 alert('fail : DialogId는 숫자만')
                 return
             }
-            await GetDialogUri(param)
-        }
-        async function sendDelete(param){
-            if(isNaN(param) == true){
-                alert('fail : DialogId는 숫자만')
-                return
-            }
-            await DeleteDialogUri(param)
-        }
-        async function DeleteDialogUri(param){
-            let response = await fetch(`http://192.168.0.25:3000/finesse/api/Dialog/${param}`, {
-                method : 'delete',
-                headers : {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-            })
-            if(!response.ok){
-                const ret = await response.json()
-                alert(`fail ${ret.message}`)
-                return
-            }
-            alert('success')
-            if(response.redirected){
-                window.location.href = response.url
-            } else {
-                let currentDiv = document.getElementById('dialogDiv')
-                currentDiv.innerHTML = ''
-            }
-        }
-        async function PostPutDialogUri(param, method, formObject){
-            data =JSON.stringify(formObject)
-            const response = await fetch(`http://192.168.0.25:3000/finesse/api/Dialog/${param}`, {
-                method : method,
-                headers : {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body : data,
-            })
-            if(!response.ok) {
-                const ret = await response.json()
-                alert(`fail ${ret.message}`)
-                return
-            }
-            alert('success')
-            if(response.redirected){
-                window.location.href = response.url
-            }
-        }
-        async function GetDialogUri(param){
-            let response = await fetch(`http://192.168.0.25:3000/finesse/api/Dialog/${param}`)
-            if(!response.ok){
-                const ret = await response.json()
-                alert(`fail ${ret.message}`)
-                return
-            }
             
-            let strXmlDialog = await response.text()
-            let objXmlDialog = parseXml(strXmlDialog)
-            let strJsonDialog = xml2json(objXmlDialog, ' ')
-            let objJsonDialog = JSON.parse(strJsonDialog)
-
-            let currentDiv = document.getElementById('dialogDiv')
-            currentDiv.innerHTML = ''
-
-            let div = document.createElement('div')
-            getObjectParam(0, objJsonDialog, div , '')
-
-            currentDiv.insertAdjacentElement('beforeend', div)
+            await DeleteDialogUri(`http://192.168.0.25:3000/finesse/api/Dialog/${id}`)
         }
+        async function sendSelect(id){
+            console.log('sendSelect : ', id)
+            await GetUri_SetElement(`http://192.168.0.25:3000/finesse/api/Dialog/${id}`)
+        }
+
     </script>
 
     <!-- http://192.168.0.25:3000/finesse/api/Dialog -->
-    <form id='dialogForm' action='' method="POST" name="form">
+    <form id='mainForm' action='' method="POST" name="form">
         <input id="createBtn" type="button" value="생성" onclick="sendCreate()">
-        <input id="selectBtn" type="button" value="조회" onclick="sendSelect(document.getElementById('dialogId').value)">
+        <input id="selectBtn" type="button" value="조회" onclick="sendSelect(document.getElementById('subId').value)">
         <input id="updateBtn" type="button" value="수정" onclick="sendUpdate()">
-        <input id="deleteBtn" type="button" value="삭제" onclick="sendDelete(document.getElementById('dialogId').value)">
+        <input id="deleteBtn" type="button" value="삭제" onclick="sendDelete(document.getElementById('subId').value)">
         DialogID (조회/삭제 시만 사용하는 Text): 
-        <input id="dialogId" type="text" value="다이얼로그 ID 입력후 조회/수정/삭제. 생성은 ID 사용안하고 아래 내용으로 생성" size=70>
+        <input id="subId" type="text" value="다이얼로그 ID 입력후 조회/수정/삭제. 생성은 ID 사용안하고 아래 내용으로 생성" size=70>
         
-        <div id='dialogDiv'>
+        <div id='mainDiv'>
             <!-- 여기 dialog object가 들어감-->
         </div>
         

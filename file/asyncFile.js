@@ -20,8 +20,7 @@ exports.select = async function(path){
 exports.update = async function(path, data){
     let err = undefined
     try{
-        ret = await fs.writeFile(path, data)
-        console.log(ret)
+        await fs.writeFile(path, data)
     }
     catch(exception){
         err = exception
@@ -32,5 +31,39 @@ exports.update = async function(path, data){
         }
     }
     
+}
+
+exports.delete = async function(path){
+    let err = undefined
+    try{
+        await fs.unlink(path)
+    }
+    catch(exception){
+        err = exception
+    }
+    finally{
+        return{
+            err : err
+        }
+    }
+}
+exports.exists = async function (path) {
+    let exists = undefined
+    let err = undefined
+    try{
+        let exists = await fs.access(path, fs.F_OK)
+        console.log(exists)
+    }
+    catch(exception){
+        err = exception
+    }
+    finally{
+        return {
+            err : err,
+            exists : exists
+        }
+    }
+
+
 }
 

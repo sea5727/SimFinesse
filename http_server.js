@@ -1,8 +1,8 @@
 const logger = require('./utils/logger');
 const express = require('express');
-const xmlParser = require('express-xml-bodyparser');
+// const xmlParser = require('express-xml-bodyparser');
 const bodyParser = require('body-parser')
-
+require('body-parser-xml')(bodyParser);
 const app = express();
 app.locals.util = require('util')
 app.use('/public', express.static('bower_components/jquery-serialize-object'))
@@ -14,15 +14,23 @@ app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
 
 
-app.use(bodyParser .json());
-app.use(bodyParser .urlencoded({ extended: true }));
-app.use(xmlParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.xml({
+    xmlParseOptions : {
+        explicitArray : false,
+    }
+}));
+// app.use(xmlParser());
 
 
 app.get('/', (req, res) => {
     res.render('index')
 });
 
+app.get('/views', (req, res) => {
+    res.render('index')
+})
 
 
 app.use('/finesse/views/SystemInfo', require('./finesse/views/SystemInfo'))

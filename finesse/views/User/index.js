@@ -3,11 +3,13 @@ const express = require('express');
 const router = express.Router();
 const utils = require('../../../utils/utils')
 const userFormat = require('./user_format.json')
+const asyncFile = require('../../../file/asyncFile')
+const expressAsyncHandler = require('express-async-handler')
 
-router.get('/', (req, res) => {
-    console.log(req)
-    res.send()
-})
+
+router.get('/', expressAsyncHandler( async (req, res) => {
+    return res.render('User')
+}))
 
 router.get('/:id' , (req, res) => {
     

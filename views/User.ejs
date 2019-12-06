@@ -2,33 +2,53 @@
 <html lang="ko">
 
 <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="http://192.168.0.25:3000/public/xml2json.js"></script>
+    <script type="text/javascript" src="http://192.168.0.25:3000/public/json2xml.js"></script>
+    <script type="text/javascript" src="http://192.168.0.25:3000/public/finesseRestApi.js"></script>
+    <script type="text/javascript" src="http://192.168.0.25:3000/public/jquery.serialize-object.js"></script>
     <meta charset="UTF-8">
     <title>SimFinesse</title>
-    <link rel="stylesheet" href="stylesheets/style.css" />
+    <!-- <link rel="stylesheet" href="stylesheets/style.css" /> -->
 </head>
 
 <body>
-    <form action="createUser" method="POST">
-        dialogs : <input type="text" name="dialogs" value=<%= user.User.dialogs  %>> <br>
-        extension : <input type="text" name="extension" value=<%= user.User.extension  %>> <br>
-        firstName : <input type="text" name="firtName" value=<%= user.User.firstName  %>> <br>
-        lastName : <input type="text" name="lastName" value=<%= user.User.lastName  %>> <br>
-        loginId : <input type="text" name="loginId" value=<%= user.User.loginId  %>> <br>
-        loginName : <input type="text" name="loginName" value=<%= user.User.loginName  %>> <br>
-        mediaType : <input type="text" name="mediaType" value=<%= user.User.mediaType  %>> <br>
-        pendingState : <input type="text" name="pendingState"value=<%= user.User.pendingState  %>> <br>
-        roles{ <br>
-                role : <input type="text" name="role" value=<%= user.User.roles.role  %>> <br>
-        }, <br>
-        settings{ <br>
-                wrapUpOnIncoming : <input type="text" name="wrapUpOnIncoming" value=<%= user.User.settings.wrapUpOnIncoming  %>> <br>
-        }, <br>
-        state : <input type="text" name="state", value=<%= user.User.state  %>> <br>
-        stateChangeTime : <input type="text" name="stateChangeTime" value=<%= user.User.stateChangeTime  %>> <br>
-        teamId : <input type="text" name="teamId" value=<%= user.User.teamId  %>> <br>
-        teamName : <input type="text" name="teamName" value=<%= user.User.teamName  %>> <br>
-        uri : <input type="text" name="uri" value=<%= user.User.uri  %>> <br>
-        <input type="submit" value="저장">
+    <script>
+        window.onload = GetUri_SetElement('http://192.168.0.25:3000/finesse/api/User/UserFormat')
+        async function sendSelect(id){
+            await GetUri_SetElement(`http://192.168.0.25:3000/finesse/api/User/${id}`)
+        }
+        async function sendCreate(){
+            let formObject = $("#mainForm").serializeObject()
+            let id = formObject.User.loginId 
+            
+            await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/User/${id}`, 'post', formObject)
+        }
+        async function sendUpdate(){
+            let formObject = $("#mainForm").serializeObject()
+            let id = formObject.User.loginId 
+            
+            await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/User/${id}`, 'put', formObject)
+        }
+        async function sendDelete(id){
+            if(isNaN(id) == true){
+                alert('fail : User 숫자만')
+                return
+            }
+            
+            await DeleteDialogUri(`http://192.168.0.25:3000/finesse/api/User/${id}`)
+        }
+    </script>
+    <form id='mainForm' action='' method="POST" name="form">
+        <input id="createBtn" type="button" value="생성" onclick="sendCreate()">
+        <input id="selectBtn" type="button" value="조회" onclick="sendSelect(document.getElementById('subId').value)">
+        <input id="updateBtn" type="button" value="수정" onclick="sendUpdate()">
+        <input id="deleteBtn" type="button" value="삭제" onclick="sendDelete(document.getElementById('subId').value)">
+        UserID (조회/삭제 시만 사용하는 Text): 
+        <input id="subId" type="text" value="유저 ID 입력후 조회/수정/삭제. 생성은 ID 사용안하고 아래 내용으로 생성" size=70>
+        <div id='mainDiv'>
+                <!-- 여기 object가 들어감-->
+        </div>
     </form>
 </body>
 

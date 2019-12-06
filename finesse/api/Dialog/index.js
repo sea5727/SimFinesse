@@ -18,10 +18,10 @@ router.post('/:id', (req, res) => {
         let data = JSON.stringify(req.body, null, 4)
         fs.writeFile(`.${req.originalUrl}.json`, data, (err) => {
             if(err){
-                return res.status(400).send({messgae : 'create fail'})
+                return res.status(400).send({message : 'create fail'})
             }
-            
-            return res.redirect(301, 'http://192.168.0.25:3000/')    
+            return res.send(200)
+            // return res.redirect(301, 'http://192.168.0.25:3000/')    
         })
     })
 })
