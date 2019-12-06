@@ -1,22 +1,29 @@
 const logger = require('../../../utils/logger')
 const { Machine, interpret } = require('xstate');
+const finesseMemory = require('../../../memory')
+const dateFormat = require('dateformat')
 const builder = require('xmlbuilder');
- 
+const asyncFile = require('../../../file/asyncFile')
 // Stateless machine definition
 // machine.transition(...) is a pure function used by the interpreter.
 
-const UserMachineConfig = {
+
+const _userMachineConfig = {
     id: 'User',
     initial: 'LOGOUT',
     states: {
         LOGOUT: {
-            on:
-            {
-                LOGIN: 'NOT_READY'
+            on: {
+                LOGIN: 'LOGIN'
             }
         },
         LOGIN: {
-            on: { '': 'NOT_READY' }
+            on: { 
+                '': {
+                    target : 'NOT_READY',
+                    actions : ['NotReadyUserEvent']
+                }
+            }
         },
         NOT_READY: {
             on: {
@@ -35,9 +42,26 @@ const UserMachineConfig = {
         CALL: {
 
         }
+    },
+}
+const _userActions = {
+    actions : {
+        LoginUserEvent : (context, event) =>{
+            console.log(context)
+            console.log(event)
+        },
+        NotReadyUserEvent : (context, event) => {
+            console.log('actions NotReadyUserEvent')
+            return
+            console.log(context)
+            console.log(event)
+            let xmppSession = finesseMemory.get_xmpp(context.User.loginId)
+            if(xmppSession == null)
+                return
+
+        }
     }
 }
-
 const UserEventFormat = (UserObj) => {
     let UserID = UserObj.User.loginId;
 
@@ -85,41 +109,35 @@ const UserEventFormat = (UserObj) => {
 }
 
 class UserStateObject{
-    constructor(){
-        this.UserStateMachine = Machine(UserMachineConfig)
-        this.xmppSession = null
-        this.UserObj = null
-    }
-    InitXmppSession(xmppSession){
-        this.xmppSession = xmppSession
-        this.UserStateMachine = this.UserStateMachine.withContext({
-            'xmppSession' : this.xmppSession,
-            'UserObj' : this.UserObj ,
-        })
-        return this
-    }
-    InitUserObj(UserObj){
-        this.UserObj = UserObj
-        this.UserStateMachine = this.UserStateMachine.withContext({
-            'xmppSession' : this.xmppSession,
-            'UserObj' : this.UserObj ,
-        })
-        return this
-    }
-    CreateUserFsm(){
+    constructor(initContext){
+        this.userMachineConfig = _userMachineConfig
+        if(initContext != null){
+            this.userMachineConfig.context = initContext
+        }
+        this.UserStateMachine = Machine(this.userMachineConfig, _userActions)
         this.User = interpret(this.UserStateMachine).onTransition(this.EventCallback).start()
-        return this.User
     }
+    // InitXmppSession(xmppSession){
+    //     this.xmppSession = xmppSession
+    //     this.UserStateMachine = this.UserStateMachine.withContext({
+    //         'xmppSession' : this.xmppSession,
+    //         'UserObj' : this.UserObj ,
+    //     })
+    //     return this
+    // }
+
     EventCallback(state){
-        if(state.value == 'LOGOUT') return
-            console.log(state.value)
-        if(state.context.xmppSession != null){
-                let userEvent = UserEventFormat(state.context.UserObj)
-                logger.debug(userEvent)
-                state.context.xmppSession.send(userEvent)
-            }
+        console.log('EventCallback state.value : ' , state.value)
+        
+        // state.context.User.state = state.value
+        // state.context.User.stateChangeTime = dateFormat(new Date(), "UTC:yyyy-mm-dd'T'HH:MM:ss'Z'")        
+        // let ret = asyncFile.update(`.${state.context.User.uri}.json`, JSON.stringify(state.context, null, 4))
+
+        // let xmppSession = finesseMemory.get_xmpp(state.context.User.loginId)
+        // if(xmppSession != null)
+        //     xmppSession.send(UserEventFormat(state.context))
     }
-    GetXmppSession(){
+    GetUser(){
         return this.User
     }
 }

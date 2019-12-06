@@ -1,5 +1,5 @@
-let xmpp_client = []
-let user_fsm = []
+let xmpp_client = {}
+let user_fsm = {}
 module.exports = {
     get_xmpp : function(id){
         return xmpp_client[id]

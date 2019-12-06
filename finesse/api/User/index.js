@@ -7,6 +7,8 @@ const builder = require('xmlbuilder')
 const UserFsm = require('./UserFsm')
 const express = require('express')
 const FinesseMemory = require('../../../memory');
+const asyncFile = require('../../../file/asyncFile')
+const xpressAsyncHandler = require('express-async-handler')
 const router = express.Router()
 
 //curl -X GET 127.0.0.1:3000/finesse/api/User/840000009
@@ -31,10 +33,50 @@ router.get('/:id', (req, res) => {
 })
 
 //curl -X PUT 192.168.0.25:3000/finesse/api/User/840000009 -d "<User><extension>3000</extension><state>NOT_READY</state></User>" -H "Content-Type: Application/xml" -v
-//curl -X PUT 192.168.0.25:3000/finesse/api/User/840000009 -d "<User><extension>3003</extension><state>LOGIN</state></User>" -H "Content-Type: Application/xml" -v
-router.put('/:id', (req, res) => {
+//curl -X PUT 192.168.0.205:3000/finesse/api/User/840000009 -d "<User><extension>3003</extension><state>LOGIN</state></User>" -H "Content-Type: Application/xml" -v
+router.put('/:id', xpressAsyncHandler(async (req, res) => {
     logger.info(`[HTTP] ${req.method} ${req.originalUrl} : ${JSON.stringify(req.body)}`)
 
+    const userId = req.params.id
+
+    let memoryUser = FinesseMemory.get_user(userId)
+    let userData = undefined
+    if(memoryUser === undefined){ // need select
+        const { err, data } = await asyncFile.select(`.${req.originalUrl}.json`)
+        if(err){
+            logger.info(`[ERR] url: ${req.originalUrl} err : ${err.message}`)
+            return res.status(404).send()
+        }
+        userData = JSON.parse(data)
+    }
+    else 
+        userData = memoryUser.User.state.context
+
+
+    if(req.body.user.state[0] == 'LOGIN'){ // if login request
+        if(userData.User.state != 'LOGOUT'){
+            return res.status(400).send({messgae : 'already logined user'})//todo 실패 d응답
+        }
+        userData.User.extension = req.body.user.extension[0]
+        userFsm = new UserFsm(userData)
+        FinesseMemory.set_user(userId, userFsm)
+        memoryUser = userFsm
+    }
+
+    memoryUser.GetUser().send(req.body.user.state[0])
+
+    console.log('start update')
+    // const { err } = asyncFile.update(`.${req.originalUrl}.json`, )
+    // if(err) {
+    //     logger.info(`[ERR] url: ${req.originalUrl} err : ${err.message}`)
+    //     return res.status(500).send()
+    // }
+
+    
+    //memoryUser.GetUser().send(req.body.user.state[0])
+
+
+    return res.status(404).send()
     fs.readFile(`.${req.originalUrl}.json`, (err, data) => {
         if(err){
             logger.info(`[ERR] url: ${req.originalUrl} err : ${err.message}`)
@@ -88,5 +130,5 @@ router.put('/:id', (req, res) => {
 
         }
     })
-})
+}))
 module.exports = router;
