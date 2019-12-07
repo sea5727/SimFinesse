@@ -7,65 +7,89 @@ const builder = require('xmlbuilder')
 const express = require('express')
 const FinesseMemory = require('../../../memory');
 const router = express.Router()
+const asyncFile = require('../../../file/asyncFile')
+const expressAsyncHandler = require('express-async-handler')
 
-router.post('/:id', (req, res) => {
-    logger.info(`[HTTP] ${req.method} ${req.originalUrl} : ${JSON.stringify(req.body)}`)    
 
-    fs.exists(`.${req.originalUrl}.json`, (exist) => {
-        if(exist){
-            return res.status(400).send({message : 'already exists'})
-        }
-        let data = JSON.stringify(req.body, null, 4)
-        fs.writeFile(`.${req.originalUrl}.json`, data, (err) => {
-            if(err){
-                return res.status(400).send({message : 'create fail'})
-            }
-            return res.send(200)
-            // return res.redirect(301, 'http://192.168.0.25:3000/')    
-        })
-    })
-})
 
-router.get('/:id', (req, res) => {
+
+
+router.post('/:id', expressAsyncHandler(async (req, res) => {
+    var { err } = await asyncFile.exists(`.${req.originalUrl}.json`)
+    if (!err) {
+        return res.send(404, { message: 'already exists' })
+    }
+
+    var { err } = await asyncFile.update(`.${req.originalUrl}.json`, JSON.stringify(req.body, null, 4))
+    if (err) {
+        return res.status(500).send({ message: 'create fail' })//todo 실패 d응답
+    }
+
+    res.status(202).send()
+
+    let dataXml = parser_j2x.parse(req.body) 
+    logger.debug(`[XML] url: ${req.originalUrl} xml : ${dataXml}`)
+
+    // 1. 호 만들어짐
+    // 2. 유저 찾기
+    let anyUser = FinesseMemory.get_any_user()
+    if(anyUser === undefined)
+        return
+
+    const userId = anyUser.Fsm.state.context.User.loginId
+    let result = anyUser.Fsm.send('RESERVED')
+    if(!result.changed)
+        return
+    
+    var { err } = await asyncFile.update(`.${result.context.User.uri}.json`, JSON.stringify(result.context, null, 4))
+    if(err)
+        return
+
+    const xmppSession = FinesseMemory.get_xmpp(userId)
+    if(xmppSession != null) {
+        const xmppUserEvent = xmlFormat.XmppUserEventFormat(result.context)
+        xmppSession.send(xmppUserEvent)
+    }
+
+    
+    // 3. RESERVED
+    // 4. ALERT
+    return
+}))
+
+router.get('/:id', expressAsyncHandler( async (req, res) => {
     logger.info(`[HTTP] ${req.method} ${req.originalUrl} : ${JSON.stringify(req.body)}`)
 
-    fs.readFile(`.${req.originalUrl}.json`, (err, data) => {
-        if(err){
-            logger.info(`[ERR] url: ${req.originalUrl} err : ${err.message}`)
-            return res.status(404).send({message : 'no exists'})
-        }
-        else {
-            dataObj = JSON.parse(data.toString())
-            let dataXml = parser_j2x.parse(dataObj)
-            logger.debug(`[XML] url: ${req.originalUrl} xml : ${dataXml}`)
-            res.status(202)
-            res.contentType('Application/xml')
-            return res.send(dataXml)
-        }
-    })
-})
+    var { err, data } = await asyncFile.select(`.${req.originalUrl}.json`)
+    if(err){
+        logger.info(`[ERR] url: ${req.originalUrl} err : ${err.message}`)
+        return res.status(404).send({message : 'no exists'})
+    }
 
-router.put('/:id', (req, res) => {
+    dataObj = JSON.parse(data)
+    let dataXml = parser_j2x.parse(dataObj)
+    logger.debug(`[XML] url: ${req.originalUrl} xml : ${dataXml}`)
+    res.status(202)
+    res.contentType('Application/xml')
+    return res.send(dataXml)
+}))
+
+router.put('/:id', expressAsyncHandler(async (req, res) => {
     logger.info(`[HTTP] ${req.method} ${req.originalUrl} : ${JSON.stringify(req.body)}`)
 
-    fs.readFile(`.${req.originalUrl}.json`, (err, data) => {
-        if(err){
-            logger.info(`[ERR] url: ${req.originalUrl} err : ${err.message}`)
-            return res.status(404).send()
-        }
-        fs.writeFile(`.${req.originalUrl}.json`, JSON.stringify(req.body, null, 4), (err) => {
-            if(err) {
-                logger.info(`[ERR] url: ${req.originalUrl} err : ${err.message}`)
-                return res.status(404).send()
-            }
-            // 이부분에서 xmpp user event 내려줘야 할듯... fsm_state..??
-            let dataXml = parser_j2x.parse(req.body) 
-            logger.debug(`[XML] url: ${req.originalUrl} xml : ${dataXml}`)
-            res.status(202).contentType('Application/xml').send()
-            return
-        })
-    })
-})
+    var { err } = await asyncFile.exists(`.${req.originalUrl}.json`)
+    if (err) {
+        return res.status(404).send({message : `unknown`})
+    }
+
+    var { err } = await asyncFile.update(`.${req.originalUrl}.json`, JSON.stringify(req.body, null, 4))
+    if (err) {
+        return res.status(500).send({ message: 'create fail' })//todo 실패 d응답
+    }
+
+    res.status(202).contentType('Application/xml').send()
+    return 
+}))
 
 router.delete('/:id', (req, res) => {
     logger.info(`[HTTP] ${req.method} ${req.originalUrl} : ${JSON.stringify(req.body)}`)

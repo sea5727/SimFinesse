@@ -10,20 +10,20 @@ const deepmerge = require('deepmerge')
 const router = express.Router()
 
 
-    router.post('/:id', expressAsyncHandler(async (req, res) => {
-        logger.info(`[HTTP] ${req.method} ${req.originalUrl} : ${JSON.stringify(req.body)}`)
-        
-        var {err , exists} = await asyncFile.exists(`.${req.originalUrl}.json`)
-        if(!err){
-            return res.send(404, {message: 'already user exists'})
-        }
+router.post('/:id', expressAsyncHandler(async (req, res) => {
+    logger.info(`[HTTP] ${req.method} ${req.originalUrl} : ${JSON.stringify(req.body)}`)
 
-        var { err } = await asyncFile.update(`.${req.originalUrl}.json`, JSON.stringify(req.body, null, 4))
-        if(err){
-            return res.status(500).send({message : 'create fail'})//todo 실패 d응답
-        }
-        return res.status(202).send()
-    }))
+    var { err, exists } = await asyncFile.exists(`.${req.originalUrl}.json`)
+    if (!err) {
+        return res.send(404, { message: 'already user exists' })
+    }
+
+    var { err } = await asyncFile.update(`.${req.originalUrl}.json`, JSON.stringify(req.body, null, 4))
+    if (err) {
+        return res.status(500).send({ message: 'create fail' })//todo 실패 d응답
+    }
+    return res.status(202).send()
+}))
 
 
 
@@ -36,7 +36,7 @@ router.get('/:id', expressAsyncHandler(async (req, res) => {
     let memoryUser = FinesseMemory.get_user(userId)
     let userData = undefined
     if(memoryUser){
-        userData = memoryUser.User.state.context
+        userData = memoryUser.Fsm.state.context
     }
     if(memoryUser === undefined){ // need select
         const { err, data } = await asyncFile.select(`.${req.originalUrl}.json`)
@@ -72,7 +72,7 @@ router.put('/:id', expressAsyncHandler(async (req, res) => {
         userData = JSON.parse(data)
     }
     else 
-        userData = memoryUser.User.state.context
+        userData = memoryUser.Fsm.state.context
 
 
     if(req.body.User.state == 'LOGIN'){ // if login request
@@ -90,7 +90,7 @@ router.put('/:id', expressAsyncHandler(async (req, res) => {
         memoryUser = userFsm
     }
 
-    let result = memoryUser.GetUser().send(req.body.User.state)
+    let result = memoryUser.GetFsm().send(req.body.User.state)
     
     
     if(!result.changed){
@@ -113,8 +113,10 @@ router.put('/:id', expressAsyncHandler(async (req, res) => {
 
 
     const xmppSession = FinesseMemory.get_xmpp(userId)
-    if(xmppSession != null) xmppSession.send(xmppUserEvent)
-    const xmppUserEvent = xmlFormat.XmppUserEventFormat(result.context)
+    if(xmppSession != null) { 
+        const xmppUserEvent = xmlFormat.XmppUserEventFormat(result.context)
+        xmppSession.send(xmppUserEvent)
+    }
     return
 }
 ))

@@ -46,6 +46,11 @@ const UserEventFormat = (UserObj) => {
     return builder.create(full_event, { headless: true }).end({ pretty: true })
 }
 
+const DialogEventFormat = () => {
+    
+}
+
 module.exports = {
     XmppUserEventFormat : UserEventFormat,
+    XmppDialogEventFormat : DialogEventFormat,
 }

@@ -12,6 +12,13 @@ module.exports = {
     },
     set_user : function(DN, user){
         user_fsm[DN] = user
+    },
+    get_any_user : function(){
+        for (var key in user_fsm) {
+            if(user_fsm[key].Fsm.state.context.User.state == 'READY')
+                return user_fsm[key]
+        }
+        return undefined
     }
     
 }

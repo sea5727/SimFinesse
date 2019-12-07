@@ -33,13 +33,45 @@ let _userMachineConfig = {
         },
         READY: {
             on: {
-                READY: 'READY',
                 NOT_READY: 'NOT_READY',
-                CALL: 'CALL'
+                RESERVED: 'RESERVED'
             }
         },
-        CALL: {
-
+        RESERVED: {
+            on: {
+                READY : 'READY',
+                TALKING : 'TALKING',
+            }
+        },
+        TALKING : {
+            on: {
+                WORK_READY : 'WORK_READY',
+                NOT_READY : 'NOT_READY',
+                READY : 'READY',
+                HOLD : 'HOLD',
+                WORK : 'WORK',
+            }
+        },
+        WORK_READY : {
+            on: {
+                TALKING : 'TALKING',
+                READY : 'READY',
+                NOT_READY : 'NOT_READY',
+            }
+        },
+        WORK : {
+            on: {
+                NOT_READY : 'NOT_READY',
+                READY : 'READY',
+            }
+        },
+        HOLD : {
+            on: {
+                WORK_READY : 'WORK_READY',
+                WORK : 'WORK',
+                NOT_READY : 'NOT_READY',
+                READY : 'READY',
+            }
         }
     },
 }
@@ -69,7 +101,7 @@ class UserStateObject{
             this.userMachineConfig.context = initContext
         }
         this.UserStateMachine = Machine(this.userMachineConfig, _userActions)
-        this.User = interpret(this.UserStateMachine).onTransition(this.EventCallback).start()
+        this.Fsm = interpret(this.UserStateMachine).onTransition(this.EventCallback).start()
     }
     EventCallback(state){
         if(state.event.type == 'xstate.init'){
@@ -79,8 +111,8 @@ class UserStateObject{
         state.context.User.state = state.value
         state.context.User.stateChangeTime = dateFormat(new Date(), "UTC:yyyy-mm-dd'T'HH:MM:ss'Z'")
     }
-    GetUser(){
-        return this.User
+    GetFsm(){
+        return this.Fsm
     }
 }
 

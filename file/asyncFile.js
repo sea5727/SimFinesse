@@ -48,11 +48,9 @@ exports.delete = async function(path){
     }
 }
 exports.exists = async function (path) {
-    let exists = undefined
     let err = undefined
     try{
-        let exists = await fs.access(path, fs.F_OK)
-        console.log(exists)
+        err = await fs.access(path, fs.F_OK)
     }
     catch(exception){
         err = exception
@@ -60,7 +58,6 @@ exports.exists = async function (path) {
     finally{
         return {
             err : err,
-            exists : exists
         }
     }
 
