@@ -114,7 +114,7 @@ router.put('/:id', expressAsyncHandler(async (req, res) => {
 
     const xmppSession = FinesseMemory.get_xmpp(userId)
     if(xmppSession != null) { 
-        const xmppUserEvent = xmlFormat.XmppUserEventFormat(result.context)
+        const xmppUserEvent = xmlFormat.XmppEventFormat(result.context.User.loginId, result.context)
         xmppSession.send(xmppUserEvent)
     }
     return

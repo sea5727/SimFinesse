@@ -1,7 +1,6 @@
 const builder = require('xmlbuilder');
 
-const UserEventFormat = (UserObj) => {
-    let UserID = UserObj.User.loginId;
+const XmppEventFormat = (UserId, UserObj) => {
 
     var userFormat = JSON.parse(JSON.stringify(UserObj));
     Object.defineProperty(userFormat, 'user', Object.getOwnPropertyDescriptor(userFormat, 'User'));
@@ -46,11 +45,7 @@ const UserEventFormat = (UserObj) => {
     return builder.create(full_event, { headless: true }).end({ pretty: true })
 }
 
-const DialogEventFormat = () => {
-    
-}
 
 module.exports = {
-    XmppUserEventFormat : UserEventFormat,
-    XmppDialogEventFormat : DialogEventFormat,
+    XmppEventFormat : XmppEventFormat,
 }

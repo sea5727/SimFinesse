@@ -27,9 +27,6 @@ router.post('/:id', expressAsyncHandler(async (req, res) => {
 
     res.status(202).send()
 
-    let dataXml = parser_j2x.parse(req.body) 
-    logger.debug(`[XML] url: ${req.originalUrl} xml : ${dataXml}`)
-
     // 1. 호 만들어짐
     // 2. 유저 찾기
     let anyUser = FinesseMemory.get_any_user()
@@ -46,10 +43,20 @@ router.post('/:id', expressAsyncHandler(async (req, res) => {
         return
 
     const xmppSession = FinesseMemory.get_xmpp(userId)
-    if(xmppSession != null) {
-        const xmppUserEvent = xmlFormat.XmppUserEventFormat(result.context)
-        xmppSession.send(xmppUserEvent)
-    }
+    if(xmppSession == null)
+        return
+    
+    const xmppUserEvent = xmlFormat.XmppEventFormat(result.context.User.loginId, result.context)
+    xmppSession.send(xmppUserEvent)
+
+
+    req.body.Dialog.state = 'ALERTING'
+    let dataXml = parser_j2x.parse(req.body) 
+    logger.debug(`[XML] url: ${req.originalUrl} xml : ${dataXml}`)
+
+
+    const xmppDialogEvent = xmlFormat.XmppEventFormat(result.context.User.loginId, dataXml)
+    xmppSession.send(xmppDialogEvent)
 
     
     // 3. RESERVED

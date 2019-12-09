@@ -14,8 +14,8 @@
         "settings": {
             "wrapUpOnIncoming": "REQUIRED"
         },
-        "state": "RESERVED",
-        "stateChangeTime": "2019-12-07T19:11:42Z",
+        "state": "READY",
+        "stateChangeTime": "2019-12-08T04:41:37Z",
         "teamId": "1",
         "teamName": "Default",
         "uri": "/finesse/api/User/840000009"
