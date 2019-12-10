@@ -1,19 +1,19 @@
 const builder = require('xmlbuilder');
 
-const XmppEventFormat = (UserId, UserObj) => {
+const XmppEventFormat = (UserId, dataObj) => {
 
-    var userFormat = JSON.parse(JSON.stringify(UserObj));
-    Object.defineProperty(userFormat, 'user', Object.getOwnPropertyDescriptor(userFormat, 'User'));
-    delete userFormat['User'];
+    var dataFormat = JSON.parse(JSON.stringify(dataObj));
+    Object.defineProperty(dataFormat, 'user', Object.getOwnPropertyDescriptor(dataFormat, 'User'));
+    delete dataFormat['User'];
 
     let update = {
         update: {
             data: {
-                '#text': userFormat
+                '#text': dataFormat
             },
             event: { '#text': 'PUT' },
             requestId: { '#text': '' },
-            source: { '#text': `/finesse/api/User/${UserID}` }
+            source: { '#text': `/finesse/api/User/${UserId}` }
         }
     }
 
@@ -23,12 +23,12 @@ const XmppEventFormat = (UserId, UserObj) => {
     var full_event = {
         message: {
             '@from': `pubsub.${finesse_number}.${company_name}.icm`,
-            '@to': `${UserID}@${finesse_number}.${company_name}.icm`,
-            '@id': `/finesse/api/User/${UserID}__${UserID}@${finesse_number}.${company_name}.icm__FyRVw`,
+            '@to': `${UserId}@${finesse_number}.${company_name}.icm`,
+            '@id': `/finesse/api/User/${UserId}__${UserId}@${finesse_number}.${company_name}.icm__FyRVw`,
             event: {
                 '@xmlns': 'http://jabber.org/protocol/pubsub#event',
                 items: {
-                    '@node': `/finesse/api/User/${UserID}`,
+                    '@node': `/finesse/api/User/${UserId}`,
                     item: {
                         '@id': 'da931a91-f39d-4081-8361-9afdf606956848660477',
                         notification: {

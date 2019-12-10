@@ -1,0 +1,113 @@
+{
+    "Dialog": {
+        "associatedDialogUri": "",
+        "fromAddress": "01073647790",
+        "id": "156494662",
+        "mediaProperties": {
+            "DNIS": "3005",
+            "callType": "PREROUTE_ACD_IN",
+            "callvariables": {
+                "CallVariable": [
+                    {
+                        "name": "callVariable1",
+                        "value": "821343114______________________"
+                    },
+                    {
+                        "name": "callVariable2",
+                        "value": "152811000160063"
+                    },
+                    {
+                        "name": "callVariable3",
+                        "value": "DJCVP02____________232010_________0000"
+                    },
+                    {
+                        "name": "callVariable4",
+                        "value": "01073647757_____01073647757_____"
+                    },
+                    {
+                        "name": "callVariable5",
+                        "value": "112302_____Default__010010"
+                    },
+                    {
+                        "name": "callVariable6",
+                        "value": "Z05A01001_084123600__________"
+                    },
+                    {
+                        "name": "callVariable7",
+                        "value": "18"
+                    },
+                    {
+                        "name": "callVariable8",
+                        "value": "110012005100"
+                    },
+                    {
+                        "name": "callVariable9",
+                        "value": "020021608"
+                    },
+                    {
+                        "name": "callVariable10",
+                        "value": "43_1_114____________"
+                    },
+                    {
+                        "name": "user.que",
+                        "value": ""
+                    },
+                    {
+                        "name": "user.ewt",
+                        "value": "130712"
+                    }
+                ]
+            },
+            "dialogNumber": "821343",
+            "mediaId": "1",
+            "outboundClassification": "",
+            "wrapUpReason": "VOICE_ANNOUNCE"
+        },
+        "mediaType": "Voice",
+        "participants": [
+            {
+                "Participant": {
+                    "actions": {
+                        "action": [
+                            "TRANSFER_SST",
+                            "CONSULT_CALL",
+                            "HOLD",
+                            "UPDATE_CALL_DATA",
+                            "SEND_DTMF",
+                            "DROP"
+                        ]
+                    },
+                    "mediaAddress": "01073647757",
+                    "mediaAddressType": "",
+                    "startTime": "2019-05-21T04:07:38.017Z",
+                    "state": "ACTIVE",
+                    "stateCause": "",
+                    "stateChangeTime": "2019-05-21T04:07:38.017Z"
+                }
+            },
+            {
+                "Participant": {
+                    "actions": {
+                        "action": [
+                            "TRANSFER_SST",
+                            "CONSULT_CALL",
+                            "HOLD",
+                            "UPDATE_CALL_DATA",
+                            "SEND_DTMF",
+                            "DROP"
+                        ]
+                    },
+                    "mediaAddress": "5008",
+                    "mediaAddressType": "AGENT_DEVICE",
+                    "startTime": "2019-05-21T04:07:38.017Z",
+                    "state": "ACTIVE",
+                    "stateCause": "",
+                    "stateChangeTime": "2019-05-21T04:07:38.017Z"
+                }
+            }
+        ],
+        "state": "ALERTING",
+        "toAddress": "821343",
+        "uri": "/finesse/api/Dialog/156494657"
+    }
+}

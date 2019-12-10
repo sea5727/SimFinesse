@@ -27,7 +27,7 @@ router.post('/:id', expressAsyncHandler(async (req, res) => {
 
 
 
-//curl -X GET 192.168.0.25:3000/finesse/api/User/840000009
+//curl -X GET 192.168.0.205:3000/finesse/api/User/840000009
 router.get('/:id', expressAsyncHandler(async (req, res) => {
     logger.info(`[HTTP] ${req.method} ${req.originalUrl} : ${JSON.stringify(req.body)}`)
 
@@ -54,8 +54,8 @@ router.get('/:id', expressAsyncHandler(async (req, res) => {
     return res.send(dataXml)
 }))
 
-//curl -X PUT 192.168.0.25:3000/finesse/api/User/840000009 -d "<User><extension>3000</extension><state>NOT_READY</state></User>" -H "Content-Type: Application/xml" -v
-//curl -X PUT 192.168.0.25:3000/finesse/api/User/840000009 -d "<User><extension>3003</extension><state>LOGIN</state></User>" -H "Content-Type: Application/xml" -v
+//curl -X PUT 192.168.0.205:3000/finesse/api/User/840000009 -d "<User><extension>3000</extension><state>NOT_READY</state></User>" -H "Content-Type: Application/xml" -v
+//curl -X PUT 192.168.0.205:3000/finesse/api/User/840000009 -d "<User><extension>3003</extension><state>LOGIN</state></User>" -H "Content-Type: Application/xml" -v
 router.put('/:id', expressAsyncHandler(async (req, res) => {
     logger.info(`[HTTP] ${req.method} ${req.originalUrl} : ${JSON.stringify(req.body)}`)
 
@@ -103,6 +103,8 @@ router.put('/:id', expressAsyncHandler(async (req, res) => {
         }
     }
     
+    if(req.body.User.state == 'LOGIN')
+        req.body.User.state = 'NOT_READY'
     result.context = deepmerge(result.context, req.body)
 
     const { err } = await asyncFile.update(`.${req.originalUrl}.json`, JSON.stringify(result.context, null, 4))

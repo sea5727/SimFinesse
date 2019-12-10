@@ -9,6 +9,7 @@ const FinesseMemory = require('../../../memory');
 const router = express.Router()
 const asyncFile = require('../../../file/asyncFile')
 const expressAsyncHandler = require('express-async-handler')
+const xmlFormat = require('../xmlFormat')
 
 
 
@@ -55,7 +56,7 @@ router.post('/:id', expressAsyncHandler(async (req, res) => {
     logger.debug(`[XML] url: ${req.originalUrl} xml : ${dataXml}`)
 
 
-    const xmppDialogEvent = xmlFormat.XmppEventFormat(result.context.User.loginId, dataXml)
+    const xmppDialogEvent = xmlFormat.XmppEventFormat(result.context.User.loginId, req.body)
     xmppSession.send(xmppDialogEvent)
 
     
