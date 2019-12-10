@@ -1,17 +1,39 @@
 
 <html>
     <head>
+      <script type="text/javascript" src="http://192.168.0.25:3000/public/finesseRestApi.js"></script>
+      <script type="text/javascript" src="http://192.168.0.25:3000/public/json2xml.js"></script>
       Simm Finesse
     </head>
     <body>
+      <script>
+        async function CallPresnt(dialogId){
+          console.log('CallPresent! ', dialogId)
+          formObject = {
+            Dialog : {
+              requestedAction : 'ALERTING'
+            }
+          }
+          await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/Dialog/${dialogId}`, 'put', formObject)
+
+        }
+        async function CallConnect(dialogId){
+          console.log('CallConnect! ', dialogId)
+        }
+      </script>
       <h1>
         유저
       </h1>
-      <p><a href="/finesse/views/User">유저</a></p>
+      <p><a href="/finesse/views/User">유저CRUD</a></p>
       <h1>
         다이얼로그
       </h1>
-      <p><a href="/finesse/views/Dialog">다이얼로그</a></p>
+      <p><a href="/finesse/views/Dialog">다이얼로그CRUD</a></p>
+      <form>
+        <input id="dialogId" type="text">
+        <input id="CallPresentBtn" type="button" value="CallPresent" onclick="CallPresnt(document.getElementById('dialogId').value)">
+        <input id="CallConnectBtn" type="button" value="CallConnect" onclick="CallPresnt(document.getElementById('dialogId').value)">
+      </form>
       <p><a href="/finesse/views/SystemInfo">시스템인포</a></p>
     </body>
   </html>

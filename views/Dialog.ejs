@@ -3,10 +3,10 @@
         
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script type="text/javascript" src="http://192.168.0.205:3000/public/xml2json.js"></script>
-    <script type="text/javascript" src="http://192.168.0.205:3000/public/json2xml.js"></script>
-    <script type="text/javascript" src="http://192.168.0.205:3000/public/finesseRestApi.js"></script>
-    <script type="text/javascript" src="http://192.168.0.205:3000/public/jquery.serialize-object.js"></script>
+    <script type="text/javascript" src="http://192.168.0.25:3000/public/xml2json.js"></script>
+    <script type="text/javascript" src="http://192.168.0.25:3000/public/json2xml.js"></script>
+    <script type="text/javascript" src="http://192.168.0.25:3000/public/finesseRestApi.js"></script>
+    <script type="text/javascript" src="http://192.168.0.25:3000/public/jquery.serialize-object.js"></script>
     <meta charset="UTF-8">
     <title>SimFinesse</title>
     <!-- <link rel="stylesheet" href="stylesheets/style.css" /> -->
@@ -14,7 +14,7 @@
 
 <body>
     <script>
-        window.onload = GetUri_SetElement(`http://192.168.0.205:3000/finesse/api/Dialog/DialogFormat`)
+        window.onload = GetUri_SetElement(`http://192.168.0.25:3000/finesse/api/Dialog/DialogFormat`)
         function plusBtn(id){
             //if(id == 'Dialog[mediaProperties][callvariables][CallVariable]'){
             //    let br = ''
@@ -35,13 +35,13 @@
             let formObject = $("#mainForm").serializeObject()
             let id = formObject.Dialog.id
             
-            await PostPutDialogUri(`http://192.168.0.205:3000/finesse/api/Dialog/${id}`, 'post', formObject)
+            await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/Dialog/${id}`, 'post', formObject)
         }
         async function sendUpdate(){
             let formObject = $("#mainForm").serializeObject()
             let id = formObject.Dialog.id
             
-            await PostPutDialogUri(`http://192.168.0.205:3000/finesse/api/Dialog/${id}`, 'put', formObject)
+            await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/Dialog/${id}`, 'put', formObject)
         }
         async function sendDelete(id){
             if(isNaN(id) == true){
@@ -49,16 +49,16 @@
                 return
             }
             
-            await DeleteDialogUri(`http://192.168.0.205:3000/finesse/api/Dialog/${id}`)
+            await DeleteDialogUri(`http://192.168.0.25:3000/finesse/api/Dialog/${id}`)
         }
         async function sendSelect(id){
             console.log('sendSelect : ', id)
-            await GetUri_SetElement(`http://192.168.0.205:3000/finesse/api/Dialog/${id}`)
+            await GetUri_SetElement(`http://192.168.0.25:3000/finesse/api/Dialog/${id}`)
         }
 
     </script>
 
-    <!-- http://192.168.0.205:3000/finesse/api/Dialog -->
+    <!-- http://192.168.0.25:3000/finesse/api/Dialog -->
     <form id='mainForm' action='' method="POST" name="form">
         <input id="createBtn" type="button" value="생성" onclick="sendCreate()">
         <input id="selectBtn" type="button" value="조회" onclick="sendSelect(document.getElementById('subId').value)">

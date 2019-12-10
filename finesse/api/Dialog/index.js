@@ -26,43 +26,7 @@ router.post('/:id', expressAsyncHandler(async (req, res) => {
         return res.status(500).send({ message: 'create fail' })//todo 실패 d응답
     }
 
-    res.status(202).send()
-
-    // 1. 호 만들어짐
-    // 2. 유저 찾기
-    let anyUser = FinesseMemory.get_any_user()
-    if(anyUser === undefined)
-        return
-
-    const userId = anyUser.Fsm.state.context.User.loginId
-    let result = anyUser.Fsm.send('RESERVED')
-    if(!result.changed)
-        return
-    
-    var { err } = await asyncFile.update(`.${result.context.User.uri}.json`, JSON.stringify(result.context, null, 4))
-    if(err)
-        return
-
-    const xmppSession = FinesseMemory.get_xmpp(userId)
-    if(xmppSession == null)
-        return
-    
-    const xmppUserEvent = xmlFormat.XmppEventFormat(result.context.User.loginId, result.context)
-    xmppSession.send(xmppUserEvent)
-
-
-    req.body.Dialog.state = 'ALERTING'
-    let dataXml = parser_j2x.parse(req.body) 
-    logger.debug(`[XML] url: ${req.originalUrl} xml : ${dataXml}`)
-
-
-    const xmppDialogEvent = xmlFormat.XmppEventFormat(result.context.User.loginId, req.body)
-    xmppSession.send(xmppDialogEvent)
-
-    
-    // 3. RESERVED
-    // 4. ALERT
-    return
+    return res.status(202).send()
 }))
 
 router.get('/:id', expressAsyncHandler( async (req, res) => {
@@ -85,18 +49,52 @@ router.get('/:id', expressAsyncHandler( async (req, res) => {
 router.put('/:id', expressAsyncHandler(async (req, res) => {
     logger.info(`[HTTP] ${req.method} ${req.originalUrl} : ${JSON.stringify(req.body)}`)
 
-    var { err } = await asyncFile.exists(`.${req.originalUrl}.json`)
-    if (err) {
-        return res.status(404).send({message : `unknown`})
+    var { err, data } = await asyncFile.select(`.${req.originalUrl}.json`)
+    if(err){
+        logger.info(`[ERR] url: ${req.originalUrl} err : ${err.message}`)
+        return res.status(404).send({message : 'no exists'})
     }
 
-    var { err } = await asyncFile.update(`.${req.originalUrl}.json`, JSON.stringify(req.body, null, 4))
-    if (err) {
-        return res.status(500).send({ message: 'create fail' })//todo 실패 d응답
+    if(req.body.Dialog.requestedAction == 'ALERTING'){
+        let anyUser = FinesseMemory.get_any_user()
+        if(anyUser === undefined){
+            return res.status(500).send({ message: 'no ready user' })
+        }
+
+        const userId = anyUser.Fsm.state.context.User.loginId
+        let result = anyUser.Fsm.send('RESERVED')
+        if(!result.changed){
+            return res.status(500).send({ message: 'no reserved user' })
+        }
+
+        // update user data
+        var { err } = await asyncFile.update(`.${result.context.User.uri}.json`, JSON.stringify(result.context, null, 4))
+        if(err){
+            return res.status(500).send({ message: 'update reserved user fail' })
+        }
+
+        const xmppSession = FinesseMemory.get_xmpp(userId)
+        if(xmppSession == null){
+            return res.status(500).send({ message: 'no xmpp user' })
+        }
+
+        const xmppUserEvent = xmlFormat.XmppEventFormat(result.context.User.loginId, result.context) // send xmpp user event 
+        xmppSession.send(xmppUserEvent)
+
+        let objDialog = JSON.parse(data)
+        objDialog.Dialog.state = 'ALERTING'
+
+        var { err } = await asyncFile.update(`.${req.originalUrl}.json`, JSON.stringify(objDialog, null, 4))
+        if (err) {
+            return res.status(500).send({ message: 'update fail' })
+        }
+    
+        const xmppDialogEvent = xmlFormat.XmppEventFormat(result.context.User.loginId, objDialog) // send xmpp dialog event
+        xmppSession.send(xmppDialogEvent)
     }
 
-    res.status(202).contentType('Application/xml').send()
-    return 
+    return res.status(202).contentType('Application/xml').send()
+    
 }))
 
 router.delete('/:id', (req, res) => {
