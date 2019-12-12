@@ -1,8 +1,8 @@
 
 <html>
     <head>
-      <script type="text/javascript" src="http://192.168.0.25:3000/public/finesseRestApi.js"></script>
-      <script type="text/javascript" src="http://192.168.0.25:3000/public/json2xml.js"></script>
+      <script type="text/javascript" src="http://192.168.0.205:3000/public/finesseRestApi.js"></script>
+      <script type="text/javascript" src="http://192.168.0.205:3000/public/json2xml.js"></script>
       Simm Finesse
     </head>
     <body>
@@ -14,11 +14,36 @@
               requestedAction : 'ALERTING'
             }
           }
-          await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/Dialog/${dialogId}`, 'put', formObject)
+          await PostPutDialogUri(`http://192.168.0.205:3000/finesse/api/Dialog/${dialogId}`, 'put', formObject)
 
         }
         async function CallConnect(dialogId){
           console.log('CallConnect! ', dialogId)
+        }
+        async function XmppDialogEventTest(dialogId){
+          console.log('xmppeventtest!', dialogId)
+          let dialogState = document.getElementById('dialogState').value
+          let userId = document.getElementById('userIdForDialog').value
+          
+          formObject = {
+            Dialog : {
+              requestedAction : 'TEST',
+              userId : userId,
+              state : dialogState
+            }
+          }
+          await PostPutDialogUri(`http://192.168.0.205:3000/finesse/api/Dialog/${dialogId}`, 'put', formObject)
+        }
+        async function XmppUserEventTest(UserId){
+          console.log('XmppUserEventTest!', UserId)
+          let userState = document.getElementById('userState').value
+          formObject = {
+            User : {
+              requestedAction : 'TEST',
+              state : userState
+            }
+          }
+          await PostPutDialogUri(`http://192.168.0.205:3000/finesse/api/User/${UserId}`, 'put', formObject)
         }
       </script>
       <h1>
@@ -30,10 +55,21 @@
       </h1>
       <p><a href="/finesse/views/Dialog">다이얼로그CRUD</a></p>
       <form>
-        <input id="dialogId" type="text">
-        <input id="CallPresentBtn" type="button" value="CallPresent" onclick="CallPresnt(document.getElementById('dialogId').value)">
-        <input id="CallConnectBtn" type="button" value="CallConnect" onclick="CallPresnt(document.getElementById('dialogId').value)">
+        <input id="createDialogId" type="text">
+        <input id="CallPresentBtn" type="button" value="CallPresent" onclick="CallPresnt(document.getElementById('createDialogId').value)">
+        <input id="CallConnectBtn" type="button" value="CallConnect" onclick="CallPresnt(document.getElementById('createDialogId').value)">
       </form>
+      <p>
+        UserId <input id="userId" type="text">
+        state <input id="userState" type="text">
+        <input id="XmppUserEventTestBtn" type="button" value="XmppUserEventTest" onclick="XmppUserEventTest(document.getElementById('userId').value)">
+      </p>
+      <p>
+        DialogId <input id="dialogId" type="text">
+        UserId <input id="userIdForDialog" type="text">
+        state <input id="dialogState" type="text">
+        <input id="XmppDialogEventTestBtn" type="button" value="XmppDialogEventTest" onclick="XmppDialogEventTest(document.getElementById('dialogId').value)">
+      </p>
       <p><a href="/finesse/views/SystemInfo">시스템인포</a></p>
     </body>
   </html>

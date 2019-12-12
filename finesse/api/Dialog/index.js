@@ -55,7 +55,22 @@ router.put('/:id', expressAsyncHandler(async (req, res) => {
         return res.status(404).send({message : 'no exists'})
     }
 
-    if(req.body.Dialog.requestedAction == 'ALERTING'){
+    if(req.body.Dialog.requestedAction == 'TEST'){
+        let state = req.body.Dialog.state
+        let userId = req.body.Dialog.userId
+        var { err, data } = await asyncFile.select(`./finesse/api/Dialog/${state}`)
+
+        const xmppSession = FinesseMemory.get_xmpp(userId)
+        if(xmppSession == null){
+            return res.status(500).send({ message: 'no xmpp user' })
+        }
+        let objData = parser_xj2.parse(data)
+        console.log(objData)
+        const xmppDialogEvent = xmlFormat.XmppDialogEventFormatUsingString(userId, objData) // send xmpp dialog event
+        
+        xmppSession.send(xmppDialogEvent)
+    }
+    else if(req.body.Dialog.requestedAction == 'ALERTING'){
         let anyUser = FinesseMemory.get_any_user()
         if(anyUser === undefined){
             return res.status(500).send({ message: 'no ready user' })
@@ -71,14 +86,14 @@ router.put('/:id', expressAsyncHandler(async (req, res) => {
         var { err } = await asyncFile.update(`.${result.context.User.uri}.json`, JSON.stringify(result.context, null, 4))
         if(err){
             return res.status(500).send({ message: 'update reserved user fail' })
-        }
-
-        const xmppSession = FinesseMemory.get_xmpp(userId)
+        }        const xmppSession = FinesseMemory.get_xmpp(userId)
         if(xmppSession == null){
             return res.status(500).send({ message: 'no xmpp user' })
         }
 
-        const xmppUserEvent = xmlFormat.XmppEventFormat(result.context.User.loginId, result.context) // send xmpp user event 
+
+
+        const xmppUserEvent = xmlFormat.XmppUserEventFormatUsingObject(result.context.User.loginId, result.context) // send xmpp user event 
         xmppSession.send(xmppUserEvent)
 
         let objDialog = JSON.parse(data)
@@ -89,7 +104,7 @@ router.put('/:id', expressAsyncHandler(async (req, res) => {
             return res.status(500).send({ message: 'update fail' })
         }
     
-        const xmppDialogEvent = xmlFormat.XmppEventFormat(result.context.User.loginId, objDialog) // send xmpp dialog event
+        const xmppDialogEvent = xmlFormat.XmppDialogEventFormatUsingObject(result.context.User.loginId, objDialog) // send xmpp dialog event
         xmppSession.send(xmppDialogEvent)
     }
 

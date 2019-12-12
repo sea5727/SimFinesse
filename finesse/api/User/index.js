@@ -27,7 +27,7 @@ router.post('/:id', expressAsyncHandler(async (req, res) => {
 
 
 
-//curl -X GET 192.168.0.25:3000/finesse/api/User/840000009
+//curl -X GET 192.168.0.205:3000/finesse/api/User/840000009
 router.get('/:id', expressAsyncHandler(async (req, res) => {
     logger.info(`[HTTP] ${req.method} ${req.originalUrl} : ${JSON.stringify(req.body)}`)
 
@@ -54,12 +54,30 @@ router.get('/:id', expressAsyncHandler(async (req, res) => {
     return res.send(dataXml)
 }))
 
-//curl -X PUT 192.168.0.25:3000/finesse/api/User/840000009 -d "<User><extension>3000</extension><state>NOT_READY</state></User>" -H "Content-Type: Application/xml" -v
-//curl -X PUT 192.168.0.25:3000/finesse/api/User/840000009 -d "<User><extension>3003</extension><state>LOGIN</state></User>" -H "Content-Type: Application/xml" -v
+//curl -X PUT 192.168.0.205:3000/finesse/api/User/840000009 -d "<User><extension>3000</extension><state>NOT_READY</state></User>" -H "Content-Type: Application/xml" -v
+//curl -X PUT 192.168.0.205:3000/finesse/api/User/840000009 -d "<User><extension>3003</extension><state>LOGIN</state></User>" -H "Content-Type: Application/xml" -v
 router.put('/:id', expressAsyncHandler(async (req, res) => {
     logger.info(`[HTTP] ${req.method} ${req.originalUrl} : ${JSON.stringify(req.body)}`)
 
     const userId = req.params.id
+
+    if('requestedAction' in req.body.User){
+        if(req.body.User.requestedAction == 'TEST'){
+            const { err, data } = await asyncFile.select(`.${req.originalUrl}.json`)
+            if(err){
+                logger.info(`[ERR] url: ${req.originalUrl} err : ${err.message}`)
+                return res.status(404).send({ message : `unknown user`})
+            }
+            let userData = JSON.parse(data)
+            userData.User.state = req.body.User.state
+            const xmppSession = FinesseMemory.get_xmpp(userId)
+            if(xmppSession != null) { 
+                const xmppUserEvent = xmlFormat.XmppUserEventFormatUsingObject(userId, userData)
+                xmppSession.send(xmppUserEvent)
+            }
+            return res.status(202).send()
+        }
+    }
 
     let memoryUser = FinesseMemory.get_user(userId)
     let userData = undefined
@@ -116,7 +134,7 @@ router.put('/:id', expressAsyncHandler(async (req, res) => {
 
     const xmppSession = FinesseMemory.get_xmpp(userId)
     if(xmppSession != null) { 
-        const xmppUserEvent = xmlFormat.XmppEventFormat(result.context.User.loginId, result.context)
+        const xmppUserEvent = xmlFormat.XmppUserEventFormatUsingObject(result.context.User.loginId, result.context)
         xmppSession.send(xmppUserEvent)
     }
     return
