@@ -1,11 +1,13 @@
 
 <html>
     <head>
-      <script type="text/javascript" src="http://192.168.0.205:3000/public/finesseRestApi.js"></script>
-      <script type="text/javascript" src="http://192.168.0.205:3000/public/json2xml.js"></script>
+      <script type="text/javascript" src="http://192.168.0.25:3000/public/finesseRestApi.js"></script>
+      <script type="text/javascript" src="http://192.168.0.25:3000/public/json2xml.js"></script>
       Simm Finesse
     </head>
     <body>
+
+
       <script>
         async function CallPresnt(dialogId){
           console.log('CallPresent! ', dialogId)
@@ -14,7 +16,7 @@
               requestedAction : 'ALERTING'
             }
           }
-          await PostPutDialogUri(`http://192.168.0.205:3000/finesse/api/Dialog/${dialogId}`, 'put', formObject)
+          await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/Dialog/${dialogId}`, 'put', formObject)
 
         }
         async function CallConnect(dialogId){
@@ -32,7 +34,7 @@
               state : dialogState
             }
           }
-          await PostPutDialogUri(`http://192.168.0.205:3000/finesse/api/Dialog/${dialogId}`, 'put', formObject)
+          await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/Dialog/${dialogId}`, 'put', formObject)
         }
         async function XmppUserEventTest(UserId){
           console.log('XmppUserEventTest!', UserId)
@@ -43,9 +45,56 @@
               state : userState
             }
           }
-          await PostPutDialogUri(`http://192.168.0.205:3000/finesse/api/User/${UserId}`, 'put', formObject)
+          await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/User/${UserId}`, 'put', formObject)
         }
       </script>
+
+
+      <script>
+        async function PutScenario(eventType, scenarioId){
+          console.log('PutScenario! ', scenarioId)
+          console.log(document.getElementById('ScenarioCalling').value.length)
+
+          formObject = {
+            Request : {
+              eventType : eventType,
+              scenario : {
+                Calling : document.getElementById('ScenarioCalling').value,
+                AgtLoginId : document.getElementById('ScenarioAgtAgtLoginId').value,
+                AgtExtension : document.getElementById('ScenarioAgtLoginId').value,
+                MgrLoginId : document.getElementById('ScenarioMgrMgrLoginId').value,
+                MgrExtension : document.getElementById('ScenarioMgrExtension').value,
+
+              }
+            }
+          }
+          
+          await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/Scenario/${scenarioId}`, 'put', formObject)
+        }
+        async function GetScenario(){
+          let response = await fetch(`http://192.168.0.25:3000/finesse/api/Scenario/SCENARIO_DEFAULT_VALUE`)
+          console.log('GetUri_SetElement response.ok:', response.ok)
+          if(!response.ok){
+              const ret = await response.json()
+              console.log(ret)
+              alert(`fail ${ret.message}`)
+              return
+          }
+          
+          let strResponse = await response.text()
+          let objResponse = JSON.parse(strResponse)
+          document.getElementById('ScenarioCalling').value = objResponse.Default.Calling
+          document.getElementById('ScenarioAgtLoginId').value = objResponse.Default.AgtLoginId
+          document.getElementById('ScenarioAgtExtension').value = objResponse.Default.AgtExtension
+          document.getElementById('ScenarioMgrLoginId').value = objResponse.Default.MgrLoginId
+          document.getElementById('ScenarioMgrExtension').value = objResponse.Default.MgrExtension
+          
+          console.log(strResponse)
+        }
+        window.onload = GetScenario()
+      </script>
+
+
       <h1>
         유저
       </h1>
@@ -54,6 +103,61 @@
         다이얼로그
       </h1>
       <p><a href="/finesse/views/Dialog">다이얼로그CRUD</a></p>
+      <div>
+        <h1>
+          시나리오
+        </h1>
+        <p>인입번호<input id="ScenarioCalling" type="text"></p>
+        <p>1차 사번<input id="ScenarioAgtLoginId" type="text"></p>
+        <p>1차 내선<input id="ScenarioAgtExtension" type="text"></p>
+        <p>2차 사번<input id="ScenarioMgrLoginId" type="text"></p>
+        <p>2차 내선<input id="ScenarioMgrExtension" type="text"></p>
+        <p><input id="SCENARIO_DEFAULT_VALUE" type="button" value="현재 상태 Default로 설정" onclick="PutScenario('SCENARIO_DEFAULT_VALUE', this.id)"></p>
+      </div>
+
+      <h2>
+        기본 1차 호 인입 시나리오
+      </h2>
+      <div>
+        RESERVED
+        <input id="AGT_RESERVED_USER_EVENT" type="button" value="RESERVED USER EVENT" onclick="PutScenario('USER_EVENT', this.id)">
+      </div>
+      <div>
+        ALERTING 
+        <input id="AGT_ALERTING_DIALOG_EVENT" type="button" value="ALERTING DIALOG EVENT" onclick="PutScenario('DIALOG_EVENT', this.id)">
+      </div>
+      <div>
+        TALKING
+        <input id="AGT_TALKING_USER_EVENT" type="button" value="TALKING DIALOG EVENT" onclick="PutScenario('USER_EVENT', this.id)">
+      </div>
+      <div>
+        ACTIVE
+        <input id="AGT_ACTIVE_DIALOG_EVENT" type="button" value="ACTIVE DIALOG EVENT" onclick="PutScenario('DIALOG_EVENT', this.id)">
+      </div>
+      <h2>
+        기본 2차 VOC 호 인입 시나리오
+      </h2>
+      <div>
+        RESERVED
+        <input id="MGR_RESERVED_USER_EVENT" type="button" value="RESERVED USER EVENT" onclick="PutScenario('USER_EVENT', 'MGR_RESERVED_USER_EVENT')">
+      </div>
+      <div>
+        ALERTING
+        <input id="MGR_ALERTING_DIALOG_EVENT" type="button" value="ALERTING DIALOG EVENT" onclick="PutScenario('DIALOG_EVENT', 'MGR_ALERTING_DIALOG_EVENT')">
+      </div>
+      <div>
+        ACTIVE(TRANSFER 인경우만 사용)
+        <input id="MGR_ACTIVE_DIALOG_EVENT" type="button" value="ACTIVE DIALOG EVENT" onclick="PutScenario('DIALOG_EVENT', 'MGR_ACTIVE_DIALOG_EVENT')">
+      </div>
+      <div>
+        TALKING
+        <input id="MGR_TALKING_USER_EVENT" type="button" value="TALKING DIALOG EVENT" onclick="PutScenario('USER_EVENT', 'MGR_TALKING_USER_EVENT')">
+      </div>
+      <div>
+        ACTIVE
+        <input id="MGR_ACTIVE_DIALOG_EVENT" type="button" value="ACTIVE DIALOG EVENT" onclick="PutScenario('DIALOG_EVENT', 'MGR_ACTIVE_DIALOG_EVENT')">
+      </div>
+
       <form>
         <input id="createDialogId" type="text">
         <input id="CallPresentBtn" type="button" value="CallPresent" onclick="CallPresnt(document.getElementById('createDialogId').value)">

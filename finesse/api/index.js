@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.use('/User', require('./User'))
 router.use('/Dialog', require('./Dialog'))
+router.use('/Scenario', require('./Scenario'))
 
 
 router.get('/SystemInfo', (req, res) => {
