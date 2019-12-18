@@ -8,47 +8,24 @@
     <script type="text/javascript" src="http://192.168.0.25:3000/public/finesseRestApi.js"></script>
     <script type="text/javascript" src="http://192.168.0.25:3000/public/jquery.serialize-object.js"></script>
     <meta charset="UTF-8">
-    <title>SimFinesse</title>
-    <!-- <link rel="stylesheet" href="stylesheets/style.css" /> -->
+    <title>Finesse Datas</title>
 </head>
 
 <body>
     <script>
-        let startDialog = `<%- Dialog %>`
+        let startData = `<%- Data %>`
         $(document).ready(function(){
-            objDialog = JSON.parse(startDialog)
-            ElementSettingFromObject(objDialog, 'mainDiv')
+            objData = JSON.parse(startData)
+            ElementSettingFromObject(objData, 'mainDiv')
         })
-        function plusBtn(id){
-            //if(id == 'Dialog[mediaProperties][callvariables][CallVariable]'){
-            //    let br = ''
-            //    for(let i = 0 ; i < 4 ; i++){
-            //        br += '&nbsp;&nbsp;&nbsp;'
-            //    }
-            //    document.createTextNode('{')
-            //    let node = document.createElement('input')
-            //    node.setAttribute('type', 'text')
-            //    document.getElementById(id).after(node)
-            //}
-
-        }
-        function minusBtn(param){
-            //console.log(param.name)
-        }
-        async function sendCreate(id){
-            if(isNaN(id) == true){
-                alert('fail : User 숫자만')
-                return
-            }
+        async function sendCreate(){
             let formObject = $("#mainForm").serializeObject()
+            let id = formObject.Dialog.id
             await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/Dialog/${id}`, 'post', formObject)
         }
-        async function sendUpdate(id){
-            if(isNaN(id) == true){
-                alert('fail : User 숫자만')
-                return
-            }
+        async function sendUpdate(){
             let formObject = $("#mainForm").serializeObject()
+            let id = formObject.Dialog.id
             await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/Dialog/${id}`, 'put', formObject)
         }
         async function sendDelete(id){
@@ -56,25 +33,23 @@
                 alert('fail : DialogId는 숫자만')
                 return
             }
-            
             await DeleteDialogUri(`http://192.168.0.25:3000/finesse/api/Dialog/${id}`)
         }
         async function sendSelect(id){
             let obj = await GetUri_SetElement(`http://192.168.0.25:3000/finesse/api/Dialog/${id}`, 'mainDiv')
             ElementSettingFromObject(obj , 'mainDiv')
-            document.getElementById('subId').value = id
         }
 
     </script>
 
     <!-- http://192.168.0.25:3000/finesse/api/Dialog -->
     <form id='mainForm' action='' method="POST" name="form">
-        <input id="createBtn" type="button" value="생성" onclick="sendCreate(document.getElementById('subId').value)">
+        <input id="createBtn" type="button" value="생성" onclick="sendCreate()">
         <input id="selectBtn" type="button" value="조회" onclick="sendSelect(document.getElementById('subId').value)">
-        <input id="updateBtn" type="button" value="수정" onclick="sendUpdate(document.getElementById('subId').value)">
+        <input id="updateBtn" type="button" value="수정" onclick="sendUpdate()">
         <input id="deleteBtn" type="button" value="삭제" onclick="sendDelete(document.getElementById('subId').value)">
-        DialogID: 
-        <input id="subId" type="text">
+        DialogID (조회/삭제 시만 사용하는 Text): 
+        <input id="subId" type="text" value="다이얼로그 ID 입력후 조회/수정/삭제. 생성은 ID 사용안하고 아래 내용으로 생성" size=70>
         
         <div id='mainDiv'>
             <!-- 여기 dialog object가 들어감-->

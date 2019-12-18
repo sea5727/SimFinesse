@@ -1,14 +1,24 @@
 
 <html>
     <head>
-      <script type="text/javascript" src="http://192.168.0.205:3000/public/finesseRestApi.js"></script>
-      <script type="text/javascript" src="http://192.168.0.205:3000/public/json2xml.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <script type="text/javascript" src="http://192.168.0.25:3000/public/xml2json.js"></script>
+      <script type="text/javascript" src="http://192.168.0.25:3000/public/json2xml.js"></script>
+      <script type="text/javascript" src="http://192.168.0.25:3000/public/finesseRestApi.js"></script>
+      <script type="text/javascript" src="http://192.168.0.25:3000/public/jquery.serialize-object.js"></script>
       Simm Finesse
     </head>
     <body>
 
 
       <script>
+        function OpenUserState(id){
+          window.open(`/finesse/views/User/${id}`, "a", "width=700, height=1000, left=100, top=50"); 
+        }
+        function OpenDialogState(id){
+          window.open(`/finesse/views/Dialog/${id}`, "a", "width=1000, height=1500, left=100, top=50"); 
+        }
+        
         async function CallPresnt(dialogId){
           console.log('CallPresent! ', dialogId)
           formObject = {
@@ -16,7 +26,7 @@
               requestedAction : 'ALERTING'
             }
           }
-          await PostPutDialogUri(`http://192.168.0.205:3000/finesse/api/Dialog/${dialogId}`, 'put', formObject)
+          await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/Dialog/${dialogId}`, 'put', formObject)
 
         }
         async function CallConnect(dialogId){
@@ -34,7 +44,7 @@
               state : dialogState
             }
           }
-          await PostPutDialogUri(`http://192.168.0.205:3000/finesse/api/Dialog/${dialogId}`, 'put', formObject)
+          await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/Dialog/${dialogId}`, 'put', formObject)
         }
         async function XmppUserEventTest(UserId){
           console.log('XmppUserEventTest!', UserId)
@@ -45,7 +55,7 @@
               state : userState
             }
           }
-          await PostPutDialogUri(`http://192.168.0.205:3000/finesse/api/User/${UserId}`, 'put', formObject)
+          await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/User/${UserId}`, 'put', formObject)
         }
       </script>
 
@@ -71,11 +81,10 @@
             }
           }
           
-          await PostPutDialogUri(`http://192.168.0.205:3000/finesse/api/Scenario/${scenarioId}`, 'put', formObject)
+          await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/Scenario/${scenarioId}`, 'put', formObject)
         }
         async function GetScenario(queryString){
-          let response = await fetch(`http://192.168.0.205:3000/finesse/api/Scenario/${queryString}`)
-          console.log('GetUri_SetElement response.ok:', response.ok)
+          let response = await fetch(`http://192.168.0.25:3000/finesse/api/Scenario/${queryString}`)
           if(!response.ok){
               const ret = await response.json()
               console.log(ret)
@@ -104,8 +113,8 @@
           document.getElementById('ScenarioNextDialogId').value = objResponse.NextDialog.Id
         }
         window.onload = GetScenarioDefault()
-      </script>
 
+      </script>
 
       <h1>
         유저
@@ -120,10 +129,22 @@
           시나리오
         </h1>
         <p>인입번호<input id="ScenarioCalling" type="text"></p>
-        <p>1차 사번<input id="ScenarioAgtLoginId" type="text"></p>
-        <p>1차 내선<input id="ScenarioAgtExtension" type="text"></p>
-        <p>2차 사번<input id="ScenarioMgrLoginId" type="text"></p>
-        <p>2차 내선<input id="ScenarioMgrExtension" type="text"></p>
+        <div>
+          <p>
+            1차 사번<input id="ScenarioAgtLoginId" type="text">
+            1차 내선<input id="ScenarioAgtExtension" type="text">
+            <input type="button" value="State 조회" onclick="OpenUserState(document.getElementById('ScenarioAgtLoginId').value)">
+          </p>
+        </div>
+        <div>
+          <p>
+            2차 사번<input id="ScenarioMgrLoginId" type="text">
+            2차 내선<input id="ScenarioMgrExtension" type="text">
+            <input type="button" value="State 조회" onclick="OpenUserState(document.getElementById('ScenarioMgrLoginId').value)">
+          </p>
+        </div>
+        
+        
         <p><input id="SCENARIO_DEFAULT_VALUE" type="button" value="현재 상태 Default로 설정" onclick="PutScenario('SCENARIO_DEFAULT_VALUE', 'SCENARIO_CONFIG')"></p>
       </div>
 

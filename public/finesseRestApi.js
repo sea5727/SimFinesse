@@ -1,4 +1,4 @@
-async function GetUri_SetElement(uri){
+async function GetUri_SetElement(uri, rootDiv){
     let response = await fetch(uri)
     console.log('GetUri_SetElement response.ok:', response.ok)
     if(!response.ok){
@@ -12,13 +12,17 @@ async function GetUri_SetElement(uri){
     let objXmlDialog = parseXml(strXmlDialog)
     let strJsonDialog = xml2json(objXmlDialog, ' ')
     let objJsonDialog = JSON.parse(strJsonDialog)
-    console.log(objJsonDialog)
+    return objJsonDialog
+}
 
-    let currentDiv = document.getElementById('mainDiv')
+function ElementSettingFromObject(obj, rootDiv){
+    console.log('rootDiv : ', rootDiv)
+    let currentDiv = document.getElementById(rootDiv)
+    console.log('currentDiv : ', currentDiv)
     currentDiv.innerHTML = ''
 
     let div = document.createElement('div')
-    getObjectParam(0, objJsonDialog, div , '')
+    getObjectParam(0, obj, div , '')
 
     currentDiv.insertAdjacentElement('beforeend', div)
 }

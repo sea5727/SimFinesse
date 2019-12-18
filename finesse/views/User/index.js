@@ -8,24 +8,20 @@ const expressAsyncHandler = require('express-async-handler')
 
 
 router.get('/', expressAsyncHandler( async (req, res) => {
-    return res.render('User')
+    var { err , data } = await asyncFile.select(`./finesse/api/User/UserFormat.json`)
+    if(err)
+        return res.status(500).send({ message: 'unknown id' })
+    return res.render('User', {User : data})
+
 }))
 
-router.get('/:id' , (req, res) => {
+router.get('/:id' , expressAsyncHandler( async (req, res) => {
+    var { err , data } = await asyncFile.select(`./finesse/api/User/${req.params.id}.json`)
+    if(err)
+        return res.status(500).send({ message: 'unknown id' })
+    return res.render('User', {User : data})
     
-    console.log(req)
-    fs.readFile(`./finesse/api/User/${req.params.id}.json`, (err, data) => {
-        if(err) {
-            res.send(404)
-            return
-        }
-        user = JSON.parse(data.toString())
-        return res.render('User', {
-            user : user,
-        } )
-    })
-    
-})
+}))
 
 router.put('/testaction', (req, res) => {
     console.log(req.params.id)

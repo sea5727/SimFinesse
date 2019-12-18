@@ -18,6 +18,14 @@ router.post('/:id', expressAsyncHandler(async (req, res) => {
         return res.send(404, { message: 'already user exists' })
     }
 
+    if(req.body == ''){
+        var { err, data } = await asyncFile.select(`./finesse/api/User/UserFormat.json`)
+        console.log(data)
+        if (err) {
+            return res.send(404, { message: 'create fail' })
+        }
+        req.body = JSON.parse(data)
+    }
     var { err } = await asyncFile.update(`.${req.originalUrl}.json`, JSON.stringify(req.body, null, 4))
     if (err) {
         return res.status(500).send({ message: 'create fail' })//todo 실패 d응답
@@ -27,7 +35,7 @@ router.post('/:id', expressAsyncHandler(async (req, res) => {
 
 
 
-//curl -X GET 192.168.0.205:3000/finesse/api/User/840000009
+//curl -X GET 192.168.0.25:3000/finesse/api/User/840000009
 router.get('/:id', expressAsyncHandler(async (req, res) => {
     logger.info(`[HTTP] ${req.method} ${req.originalUrl} : ${JSON.stringify(req.body)}`)
 
@@ -54,8 +62,8 @@ router.get('/:id', expressAsyncHandler(async (req, res) => {
     return res.send(dataXml)
 }))
 
-//curl -X PUT 192.168.0.205:3000/finesse/api/User/840000009 -d "<User><extension>3000</extension><state>NOT_READY</state></User>" -H "Content-Type: Application/xml" -v
-//curl -X PUT 192.168.0.205:3000/finesse/api/User/840000009 -d "<User><extension>3003</extension><state>LOGIN</state></User>" -H "Content-Type: Application/xml" -v
+//curl -X PUT 192.168.0.25:3000/finesse/api/User/840000009 -d "<User><extension>3000</extension><state>NOT_READY</state></User>" -H "Content-Type: Application/xml" -v
+//curl -X PUT 192.168.0.25:3000/finesse/api/User/840000009 -d "<User><extension>3003</extension><state>LOGIN</state></User>" -H "Content-Type: Application/xml" -v
 router.put('/:id', expressAsyncHandler(async (req, res) => {
     logger.info(`[HTTP] ${req.method} ${req.originalUrl} : ${JSON.stringify(req.body)}`)
 
@@ -65,6 +73,7 @@ router.put('/:id', expressAsyncHandler(async (req, res) => {
         if(req.body.User.requestedAction == 'TEST'){
             const { err, data } = await asyncFile.select(`.${req.originalUrl}.json`)
             if(err){
+                
                 logger.info(`[ERR] url: ${req.originalUrl} err : ${err.message}`)
                 return res.status(404).send({ message : `unknown user`})
             }
@@ -109,18 +118,7 @@ router.put('/:id', expressAsyncHandler(async (req, res) => {
     }
 
     let result = memoryUser.GetFsm().send(req.body.User.state)
-    
-    
-    if(!result.changed){
-        if(result.nextEvents.indexOf(result.event.type) >= 0){
-            result.context = deepmerge(result.context, req.body)
-            return res.status(202).send()
-        }
-        else {
-            return res.status(400).send({message : 'invalid message'})
-        }
-    }
-    
+ 
     if(req.body.User.state == 'LOGIN')
         req.body.User.state = 'NOT_READY'
     result.context = deepmerge(result.context, req.body)
@@ -130,7 +128,6 @@ router.put('/:id', expressAsyncHandler(async (req, res) => {
         return res.status(500).send({message : 'update fail'})//todo 실패 d응답
     }
     res.status(202).contentType('Application/xml').send()
-
 
     const xmppSession = FinesseMemory.get_xmpp(userId)
     if(xmppSession != null) { 

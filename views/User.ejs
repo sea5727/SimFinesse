@@ -3,10 +3,10 @@
 
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script type="text/javascript" src="http://192.168.0.205:3000/public/xml2json.js"></script>
-    <script type="text/javascript" src="http://192.168.0.205:3000/public/json2xml.js"></script>
-    <script type="text/javascript" src="http://192.168.0.205:3000/public/finesseRestApi.js"></script>
-    <script type="text/javascript" src="http://192.168.0.205:3000/public/jquery.serialize-object.js"></script>
+    <script type="text/javascript" src="http://192.168.0.25:3000/public/xml2json.js"></script>
+    <script type="text/javascript" src="http://192.168.0.25:3000/public/json2xml.js"></script>
+    <script type="text/javascript" src="http://192.168.0.25:3000/public/finesseRestApi.js"></script>
+    <script type="text/javascript" src="http://192.168.0.25:3000/public/jquery.serialize-object.js"></script>
     <meta charset="UTF-8">
     <title>SimFinesse</title>
     <!-- <link rel="stylesheet" href="stylesheets/style.css" /> -->
@@ -14,38 +14,52 @@
 
 <body>
     <script>
-        window.onload = GetUri_SetElement('http://192.168.0.205:3000/finesse/api/User/UserFormat')
+        console.log('hello??')
+
+        let startUser = `<%- User %>`
+        $(document).ready(function(){
+            objUser = JSON.parse(startUser)
+            ElementSettingFromObject(objUser, 'mainDiv')
+            let subId = document.getElementById('subId')
+            console.log('subId : ' , subId)
+            subId.value = objUser.User.loginId
+        })
         async function sendSelect(id){
-            await GetUri_SetElement(`http://192.168.0.205:3000/finesse/api/User/${id}`)
+            let objUser = await GetUri_SetElement(`http://192.168.0.25:3000/finesse/api/User/${id}`, 'mainDiv')
+            ElementSettingFromObject(objUser, 'mainDiv')
+            document.getElementById('subId').value = id
         }
-        async function sendCreate(){
+        async function sendCreate(id){
+            if(isNaN(id) == true){
+                alert('fail : User 숫자만')
+                return
+            }
             let formObject = $("#mainForm").serializeObject()
-            let id = formObject.User.loginId 
-            
-            await PostPutDialogUri(`http://192.168.0.205:3000/finesse/api/User/${id}`, 'post', formObject)
+            await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/User/${id}`, 'post', formObject)
         }
-        async function sendUpdate(){
+        async function sendUpdate(id){
+            if(isNaN(id) == true){
+                alert('fail : User 숫자만')
+                return
+            }
             let formObject = $("#mainForm").serializeObject()
-            let id = formObject.User.loginId 
-            
-            await PostPutDialogUri(`http://192.168.0.205:3000/finesse/api/User/${id}`, 'put', formObject)
+            await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/User/${id}`, 'put', formObject)
         }
         async function sendDelete(id){
             if(isNaN(id) == true){
                 alert('fail : User 숫자만')
                 return
             }
-            
-            await DeleteDialogUri(`http://192.168.0.205:3000/finesse/api/User/${id}`)
+            await DeleteDialogUri(`http://192.168.0.25:3000/finesse/api/User/${id}`)
         }
     </script>
     <form id='mainForm' action='' method="POST" name="form">
-        <input id="createBtn" type="button" value="생성" onclick="sendCreate()">
+        <input id="createBtn" type="button" value="생성" onclick="sendCreate(document.getElementById('subId').value)">
         <input id="selectBtn" type="button" value="조회" onclick="sendSelect(document.getElementById('subId').value)">
-        <input id="updateBtn" type="button" value="수정" onclick="sendUpdate()">
+        <input id="updateBtn" type="button" value="수정" onclick="sendUpdate(document.getElementById('subId').value)">
         <input id="deleteBtn" type="button" value="삭제" onclick="sendDelete(document.getElementById('subId').value)">
-        UserID (조회/삭제 시만 사용하는 Text): 
-        <input id="subId" type="text" value="유저 ID 입력후 조회/수정/삭제. 생성은 ID 사용안하고 아래 내용으로 생성" size=70>
+        ID: 
+        <input id="subId" type="text">
         <div id='mainDiv'>
                 <!-- 여기 object가 들어감-->
         </div>

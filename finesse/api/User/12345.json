@@ -1,0 +1,23 @@
+{
+    "User": {
+        "dialogs": null,
+        "extension": null,
+        "firstName": null,
+        "lastName": null,
+        "loginId": null,
+        "loginName": null,
+        "mediaType": null,
+        "pendingState": null,
+        "roles": {
+            "role": null
+        },
+        "settings": {
+            "wrapUpOnIncoming": null
+        },
+        "state": "LOGOUT",
+        "stateChangeTime": null,
+        "teamId": null,
+        "teamName": null,
+        "uri": null
+    }
+}
