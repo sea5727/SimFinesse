@@ -3,10 +3,10 @@
 
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script type="text/javascript" src="http://192.168.0.25:3000/public/xml2json.js"></script>
-    <script type="text/javascript" src="http://192.168.0.25:3000/public/json2xml.js"></script>
-    <script type="text/javascript" src="http://192.168.0.25:3000/public/finesseRestApi.js"></script>
-    <script type="text/javascript" src="http://192.168.0.25:3000/public/jquery.serialize-object.js"></script>
+    <script type="text/javascript" src="http://192.168.0.205:3000/public/xml2json.js"></script>
+    <script type="text/javascript" src="http://192.168.0.205:3000/public/json2xml.js"></script>
+    <script type="text/javascript" src="http://192.168.0.205:3000/public/finesseRestApi.js"></script>
+    <script type="text/javascript" src="http://192.168.0.205:3000/public/jquery.serialize-object.js"></script>
     <meta charset="UTF-8">
     <title>SimFinesse</title>
     <!-- <link rel="stylesheet" href="stylesheets/style.css" /> -->
@@ -14,21 +14,21 @@
 
 <body>
     <script>
-        window.onload = GetUri_SetElement('http://192.168.0.25:3000/finesse/api/User/UserFormat')
+        window.onload = GetUri_SetElement('http://192.168.0.205:3000/finesse/api/User/UserFormat')
         async function sendSelect(id){
-            await GetUri_SetElement(`http://192.168.0.25:3000/finesse/api/User/${id}`)
+            await GetUri_SetElement(`http://192.168.0.205:3000/finesse/api/User/${id}`)
         }
         async function sendCreate(){
             let formObject = $("#mainForm").serializeObject()
             let id = formObject.User.loginId 
             
-            await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/User/${id}`, 'post', formObject)
+            await PostPutDialogUri(`http://192.168.0.205:3000/finesse/api/User/${id}`, 'post', formObject)
         }
         async function sendUpdate(){
             let formObject = $("#mainForm").serializeObject()
             let id = formObject.User.loginId 
             
-            await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/User/${id}`, 'put', formObject)
+            await PostPutDialogUri(`http://192.168.0.205:3000/finesse/api/User/${id}`, 'put', formObject)
         }
         async function sendDelete(id){
             if(isNaN(id) == true){
@@ -36,7 +36,7 @@
                 return
             }
             
-            await DeleteDialogUri(`http://192.168.0.25:3000/finesse/api/User/${id}`)
+            await DeleteDialogUri(`http://192.168.0.205:3000/finesse/api/User/${id}`)
         }
     </script>
     <form id='mainForm' action='' method="POST" name="form">

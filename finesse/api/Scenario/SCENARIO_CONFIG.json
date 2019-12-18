@@ -1,0 +1,12 @@
+{
+    "Default": {
+        "Calling": "01050698361",
+        "AgtLoginId": "840000009",
+        "AgtExtension": "3004",
+        "MgrLoginId": "0001109",
+        "MgrExtension": "3005"
+    },
+    "NextDialog": {
+        "Id": "156494662"
+    }
+}

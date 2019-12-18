@@ -60,7 +60,18 @@ exports.exists = async function (path) {
             err : err,
         }
     }
+}
 
-
+exports.readdir = async function(path){
+    var err = null
+    var filelist = null
+    try{
+        filelist = await fs.readdir(path)
+        return { err,  filelist }
+    }
+    catch(exception){
+        return { exception,  filelist }
+    }
+    
 }
 

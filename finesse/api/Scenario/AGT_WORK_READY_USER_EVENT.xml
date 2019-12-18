@@ -1,0 +1,21 @@
+<user>
+  <dialogs>/finesse/api/User/901810001/Dialogs</dialogs>
+  <extension>7073</extension>
+  <firstName>?꾩꽦</firstName>
+  <lastName>議?/lastName>
+  <loginId>901810001</loginId>
+  <loginName>901810001</loginName>
+  <mediaType>1</mediaType>
+  <pendingState></pendingState>
+  <roles>
+    <role>Agent</role>
+  </roles>
+  <settings>
+    <wrapUpOnIncoming>REQUIRED</wrapUpOnIncoming>
+  </settings>
+  <state>WORK_READY</state>
+  <stateChangeTime>2019-12-16T11:38:07.471Z</stateChangeTime>
+  <teamId>5054</teamId>
+  <teamName>CM_PIM2.T_0_SYS</teamName>
+  <uri>/finesse/api/User/901810001</uri>
+</user>

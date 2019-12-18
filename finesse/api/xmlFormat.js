@@ -3,8 +3,11 @@ const builder = require('xmlbuilder');
 const XmppUserEventFormatUsingObject = (UserId, dataObj) => {
 
     var dataFormat = JSON.parse(JSON.stringify(dataObj));
-    Object.defineProperty(dataFormat, 'user', Object.getOwnPropertyDescriptor(dataFormat, 'User'));
-    delete dataFormat['User'];
+    if('User' in dataObj){
+        Object.defineProperty(dataFormat, 'user', Object.getOwnPropertyDescriptor(dataFormat, 'User'));
+        delete dataFormat['User'];
+    }
+
 
     let update = {
         update: {
@@ -44,14 +47,11 @@ const XmppUserEventFormatUsingObject = (UserId, dataObj) => {
     }
     return builder.create(full_event, { headless: true }).end({ pretty: true })
 }
-const XmppDialogEventFormatUsingObject = (UserId, strXmlData) => {
+const XmppDialogEventFormatUsingObject = (UserId, dataObj) => {
 
     var dataFormat = JSON.parse(JSON.stringify(dataObj));
-    Object.defineProperty(dataFormat, 'user', Object.getOwnPropertyDescriptor(dataFormat, 'User'));
-    delete dataFormat['User'];
-
     let update = {
-        update: {
+        Update : {
             data: {
                 '#text': dataFormat
             },
