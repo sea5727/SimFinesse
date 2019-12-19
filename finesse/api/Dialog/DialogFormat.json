@@ -1,52 +1,52 @@
 {
     "Dialog" : {
         "associatedDialogUri" : null,
-        "fromAddress" : "01073647757",
-        "id" : "156494657",
+        "fromAddress" : null,
+        "id" : null,
         "mediaProperties" : {
             "DNIS" : null,
-            "callType" : "PREROUTE_ACD_IN",
+            "callType" : null,
             "callvariables" : {
                 "CallVariable" : [
                     {
                         "name" : "callVariable1",
-                        "value" : "821343114______________________"
+                        "value" : null
                     },
                     {
                         "name" : "callVariable2",
-                        "value" : "152811000160063"
+                        "value" : null
                     },
                     {
                         "name" : "callVariable3",
-                        "value" : "DJCVP02____________232010_________0000"
+                        "value" : null
                     },
                     {
                         "name" : "callVariable4",
-                        "value" : "01073647757_____01073647757_____"
+                        "value" : null
                     },
                     {
                         "name" : "callVariable5",
-                        "value" : "112302_____Default__010010"
+                        "value" : null
                     },
                     {
                         "name" : "callVariable6",
-                        "value" : "Z05A01001_084123600__________"
+                        "value" : null
                     },
                     {
                         "name" : "callVariable7",
-                        "value" : "15"
+                        "value" : null
                     },
                     {
                         "name" : "callVariable8",
-                        "value" : "110012005100"
+                        "value" : null
                     },
                     {
                         "name" : "callVariable9",
-                        "value" : "020021608"
+                        "value" : null
                     },
                     {
                         "name" : "callVariable10",
-                        "value" : "43_1_114____________"
+                        "value" : null
                     },
                     {
                         "name" : "user.que",
@@ -54,17 +54,17 @@
                     },
                     {
                         "name" : "user.ewt",
-                        "value" : "130712"
+                        "value" : null
                     }
                 ]
             },
-            "dialogNumber" : "821343",
-            "mediaId" : "1",
+            "dialogNumber" : null,
+            "mediaId" : null,
             "outboundClassification" : null,
-            "wrapUpReason" : "VOICE_ANNOUNCE"
+            "wrapUpReason" : null
 
         },
-        "mediaType" : "Voice",
+        "mediaType" : null,
         "participants" : [
             {
                 "Participant": {

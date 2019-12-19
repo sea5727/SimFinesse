@@ -6,7 +6,10 @@
         "MgrLoginId": "0001109",
         "MgrExtension": "3005"
     },
-    "NextDialog": {
+    "NextAgtDialog": {
         "Id": "156494662"
+    },
+    "NextMgrDialog": {
+        "Id": "156494663"
     }
 }

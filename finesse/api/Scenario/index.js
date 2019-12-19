@@ -25,22 +25,28 @@ router.get('/:id', expressAsyncHandler( async (req, res) => {
     }
 
     if(req.params.id == 'SCENARIO_CONFIG'){
+        let scenarioConfig = JSON.parse(data)
+
         var { err, filelist }  = await asyncFile.readdir('./finesse/api/Dialog')
         let max = -1
         let nextDialogId = 0
         for(key in filelist){
             let dialogId = _path.basename(filelist[key], ".json")
             if(isNaN(dialogId) != true) {
-                if(max < dialogId) {
-                    max = dialogId
+                if(max < parseInt(dialogId)) {
+                    max = parseInt(dialogId)
                 }
             }
         }
-        max = parseInt(max)
         nextDialogId = max + 1
-    
-        let scenarioConfig = JSON.parse(data)
-        scenarioConfig.NextDialog.Id = String(nextDialogId)
+        if(nextDialogId % 2 == 0) { // 짝수이면?
+            scenarioConfig.NextAgtDialog.Id = String(nextDialogId)
+            scenarioConfig.NextMgrDialog.Id = String(nextDialogId + 1)
+        }else { // 홀수이면
+            scenarioConfig.NextAgtDialog.Id = String(nextDialogId)
+            scenarioConfig.NextMgrDialog.Id = String(nextDialogId + 1)
+        }
+        
         data = JSON.stringify(scenarioConfig, null, 4)
         
         var { err } = await asyncFile.update(`.${req.originalUrl}.json`, data)
@@ -79,81 +85,90 @@ router.put('/:id', expressAsyncHandler(async (req, res) => {
         }
         
         return res.status(202).send()
-    } 
-    else if(req.body.Request.eventType == 'AGT_USER_EVENT'){
-        let agtExntension = null
-        let agtLoginId = null
-        if('AgtLoginId' in req.body.Request.scenario){
-            agtLoginId = req.body.Request.scenario.AgtLoginId
-            objEvent.user.loginId = agtLoginId
-            objEvent.user.loginName = agtLoginId
-            objEvent.user.uri = `/finesse/api/User/${agtLoginId}`
-            objEvent.user.dialogs = `/finesse/api/User/${agtLoginId}/Dialogs`
-        } 
-        else {
-            return res.status(500).send({ message: 'required loginId' })
+    }
+    else if(req.body.Request.eventType == 'USER_EVENT'){
+        let userId = null
+        let extension = null
+
+        if(req.body.Request.clientType == 'AGT'){
+            if(!('AgtLoginId' in req.body.Request.scenario)){
+                return res.status(500).send({ message: 'id required' })
+            }
+
+            if('AgtLoginId' in req.body.Request.scenario){
+                userId = req.body.Request.scenario.AgtLoginId
+                objEvent.user.loginId = userId
+                objEvent.user.loginName = userId
+                objEvent.user.uri = `/finesse/api/User/${userId}`
+                objEvent.user.dialogs = `/finesse/api/User/${userId}/Dialogs`
+            }
+            if('AgtExtension' in req.body.Request.scenario){ 
+                extension = req.body.Request.scenario.AgtExtension
+                objEvent.user.extension = extension
+            }
         }
-        if('AgtExtension' in req.body.Request.scenario){ 
-            agtExntension = req.body.Request.scenario.AgtExtension
-            objEvent.user.extension = agtExntension
-        }
-        if('AgtLoginId' in req.body.Request.scenario){
-            agtLoginId = req.body.Request.scenario.AgtLoginId
-            objEvent.user.loginId = agtLoginId
-            objEvent.user.loginName = agtLoginId
-            objEvent.user.uri = `/finesse/api/User/${agtLoginId}`
-            objEvent.user.dialogs = `/finesse/api/User/${agtLoginId}/Dialogs`
+        else if(req.body.Request.clientType == 'MGR'){
+            if(!('MgrLoginId' in req.body.Request.scenario)){
+                return res.status(500).send({ message: 'id required' })
+            }
+            if('MgrLoginId' in req.body.Request.scenario){
+                userId = req.body.Request.scenario.MgrLoginId
+                objEvent.user.loginId = userId
+                objEvent.user.loginName = userId
+                objEvent.user.uri = `/finesse/api/User/${userId}`
+                objEvent.user.dialogs = `/finesse/api/User/${userId}/Dialogs`
+            }
+            if('MgrExtension' in req.body.Request.scenario){ 
+                exntension = req.body.Request.scenario.MgrExtension
+                objEvent.user.extension = exntension
+            }
         }
 
-        const xmppSession = FinesseMemory.get_xmpp(agtLoginId)
+        const xmppSession = FinesseMemory.get_xmpp(userId)
         if(xmppSession == null){
             return res.status(500).send({ message: 'no sessioned user' })
         }
-        const xmppDialogEvent = xmlFormat.XmppUserEventFormatUsingObject(agtLoginId, objEvent) 
+        const xmppDialogEvent = xmlFormat.XmppUserEventFormatUsingObject(userId, objEvent) 
         xmppSession.send(xmppDialogEvent)// send xmpp dialog event
         return res.status(200).send()
     }
-    else if(req.body.Request.eventType == 'AGT_DIALOG_EVENT'){
-        let agtExntension = null
-        let agtLoginId = null
-
-        if('AgtLoginId' in req.body.Request.scenario){
-            agtLoginId = req.body.Request.scenario.AgtLoginId
-        }
-        else{
-            return res.status(500).send({ message: 'required loginId' })
-        }
-
-
-        if('Calling' in req.body.Request.scenario){
-            objEvent.dialogs.Dialog.fromAddress = req.body.Request.scenario.Calling
-            for(index in objEvent.dialogs.Dialog.mediaProperties.callvariables.CallVariable){
-                if(objEvent.dialogs.Dialog.mediaProperties.callvariables.CallVariable[index].name == 'callVariable4'){
-                    //callvariable.value = '01073647757_____01073647757_____' todo
+    else if('DIALOG_EVENT'){
+        let userId = null
+        if(req.body.Request.clientType == 'AGT'){
+            if(!('AgtLoginId' in req.body.Request.scenario)){
+                return res.status(500).send({ message: 'required loginId' })
+            }
+            if('AgtLoginId' in req.body.Request.scenario){
+                userId = req.body.Request.scenario.AgtLoginId
+            }
+            if('Calling' in req.body.Request.scenario){
+                objEvent.dialogs.Dialog.fromAddress = req.body.Request.scenario.Calling
+                for(index in objEvent.dialogs.Dialog.mediaProperties.callvariables.CallVariable){
+                    if(objEvent.dialogs.Dialog.mediaProperties.callvariables.CallVariable[index].name == 'callVariable4'){
+                        //callvariable.value = '01073647757_____01073647757_____' todo
+                    }
                 }
             }
-        }
-    
-        if('AgtExtension' in req.body.Request.scenario){ 
-            if(req.params.id.indexOf('AGT') == 0){
-                //search xmpp and send 
-                console.log('send xmpp to AGT')
+            if('AgtDialog' in req.body.Request.dialog){
+                console.log(req.body.Request.dialog.AgtDialog)
+                objEvent.dialogs.Dialog.id = req.body.Request.dialog.AgtDialog
             }
-        }
     
-        if('MgrExtension' in req.body.Request.scenario){
-            if(req.params.id.indexOf('MGR') == 0){
-                //search xmpp and send 
-                console.log('send xmpp to MGR')
+        }
+        else if(req.body.Request.clientType == 'MGR'){
+            if(!('MgrLoginId' in req.body.Request.scenario)){
+                return res.status(500).send({ message: 'required loginId' })
+            }
+            if('MgrLoginId' in req.body.Request.scenario){
+                userId = req.body.Request.scenario.MgrLoginId
+            }
+            if('MgrDialog' in req.body.Request.dialog){
+                console.log(req.body.Request.dialog.MgrDialog)
+                objEvent.dialogs.Dialog.id = req.body.Request.dialog.MgrDialog
             }
         }
 
-        if('Id' in req.body.Request.dialog){
-            console.log(req.body.Request.dialog.Id)
-            objEvent.dialogs.Dialog.id = req.body.Request.dialog.Id
-        }
-
-        const xmppSession = FinesseMemory.get_xmpp(agtLoginId)
+        const xmppSession = FinesseMemory.get_xmpp(userId)
         if(xmppSession == null){
             return res.status(500).send({ message: 'no sessioned user' })
         }
@@ -161,13 +176,14 @@ router.put('/:id', expressAsyncHandler(async (req, res) => {
         const xmppDialogEvent = xmlFormat.XmppDialogEventFormatUsingObject(agtLoginId, objEvent)
         xmppSession.send(xmppDialogEvent)// send xmpp dialog event
         return res.status(200).send()
+
     }
-   
-    return res.status(202)
+    return res.status(202).send()
 }))
 
 router.delete('/:id', (req, res) => {
     logger.info(`[HTTP] ${req.method} ${req.originalUrl} : ${JSON.stringify(req.body)}`)
     return res.status(202).send()
 })
+
 module.exports = router;

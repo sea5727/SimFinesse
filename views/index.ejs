@@ -18,16 +18,9 @@
         function OpenDialogState(id){
           window.open(`/finesse/views/Dialog/${id}`, "a", "width=1000, height=1500, left=100, top=50"); 
         }
-        
-        async function CallPresnt(dialogId){
-          console.log('CallPresent! ', dialogId)
-          formObject = {
-            Dialog : {
-              requestedAction : 'ALERTING'
-            }
-          }
-          await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/Dialog/${dialogId}`, 'put', formObject)
-
+        function OpenScenarioState(id){
+          //location.href = `/finesse/views/Scenario/${id}`
+          window.open(`/finesse/views/Scenario/${id}`, "a", "width=1000, height=1500, left=100, top=50"); 
         }
         async function CallConnect(dialogId){
           console.log('CallConnect! ', dialogId)
@@ -46,28 +39,18 @@
           }
           await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/Dialog/${dialogId}`, 'put', formObject)
         }
-        async function XmppUserEventTest(UserId){
-          console.log('XmppUserEventTest!', UserId)
-          let userState = document.getElementById('userState').value
-          formObject = {
-            User : {
-              requestedAction : 'TEST',
-              state : userState
-            }
-          }
-          await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/User/${UserId}`, 'put', formObject)
-        }
       </script>
 
 
       <script>
-        async function PutScenario(eventType, scenarioId){
+        async function PutScenario(eventType, clientType, scenarioId){
           console.log('PutScenario! ', scenarioId)
           console.log(document.getElementById('ScenarioCalling').value.length)
 
           formObject = {
             Request : {
               eventType : eventType,
+              clientType : clientType,
               scenario : {
                 Calling : document.getElementById('ScenarioCalling').value,
                 AgtLoginId : document.getElementById('ScenarioAgtLoginId').value,
@@ -75,12 +58,14 @@
                 MgrLoginId : document.getElementById('ScenarioMgrLoginId').value,
                 MgrExtension : document.getElementById('ScenarioMgrExtension').value,
               },
-              dialog : {
-                Id : document.getElementById('ScenarioNextDialogId').value,
+              AgtDialog : {
+                Id : document.getElementById('ScenarioNextAgtDialogId').value,
+              },
+              MgrDialog : {
+                Id : document.getElementById('ScenarioNextMgrDialogId').value,
               }
             }
           }
-          
           await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/Scenario/${scenarioId}`, 'put', formObject)
         }
         async function GetScenario(queryString){
@@ -106,11 +91,13 @@
           document.getElementById('ScenarioMgrLoginId').value = objResponse.Default.MgrLoginId
           document.getElementById('ScenarioMgrExtension').value = objResponse.Default.MgrExtension
 
-          document.getElementById('ScenarioNextDialogId').value = objResponse.NextDialog.Id
+          document.getElementById('ScenarioNextAgtDialogId').value = objResponse.NextAgtDialog.Id
+          document.getElementById('ScenarioNextMgrDialogId').value = objResponse.NextMgrDialog.Id
         }
         async function GetScenarioNextDialogId(){
           objResponse = await GetScenario('SCENARIO_CONFIG')
-          document.getElementById('ScenarioNextDialogId').value = objResponse.NextDialog.Id
+          document.getElementById('ScenarioNextAgtDialogId').value = objResponse.NextAgtDialog.Id
+          document.getElementById('ScenarioNextMgrDialogId').value = objResponse.NextMgrDialog.Id
         }
         window.onload = GetScenarioDefault()
 
@@ -143,83 +130,84 @@
             <input type="button" value="State 조회" onclick="OpenUserState(document.getElementById('ScenarioMgrLoginId').value)">
           </p>
         </div>
-        
-        
-        <p><input id="SCENARIO_DEFAULT_VALUE" type="button" value="현재 상태 Default로 설정" onclick="PutScenario('SCENARIO_DEFAULT_VALUE', 'SCENARIO_CONFIG')"></p>
+        <p><input id="SCENARIO_DEFAULT_VALUE" type="button" value="현재 상태 Default로 설정" onclick="PutScenario('SCENARIO_DEFAULT_VALUE', 'Nothing', 'SCENARIO_CONFIG')"></p>
       </div>
 
       <h2>
         기본 1차 호 인입 시나리오
       </h2>
       <div>
-        DIALOG_ID<input id="ScenarioNextDialogId" type="text">
+        DIALOG_ID<input id="ScenarioNextAgtDialogId" type="text">
         <input type="button" value="GET NEXT DIALOG ID" onclick ="GetScenarioNextDialogId()">
       </div>
+      <h3>
+        1차호 이벤트
+      </h3>
       <div>
         RESERVED
-        <input type="button" value="RESERVED USER EVENT" onclick="PutScenario('AGT_USER_EVENT', 'AGT_RESERVED_USER_EVENT')">
+        <input type="button" value="RESERVED USER EVENT" onclick="PutScenario('USER_EVENT', 'AGT',  'AGT_RESERVED_USER_EVENT')">
+        <input type="button" value="메시지 조회" onclick="OpenScenarioState('AGT_RESERVED_USER_EVENT')">
       </div>
       <div>
         ALERTING 
-        <input type="button" value="ALERTING DIALOG EVENT" onclick="PutScenario('AGT_DIALOG_EVENT', 'AGT_ALERTING_DIALOG_EVENT')">
-        
+        <input type="button" value="ALERTING DIALOG EVENT" onclick="PutScenario('DIALOG_EVENT', 'AGT', 'AGT_ALERTING_DIALOG_EVENT')">
+        <input type="button" value="메시지 조회" onclick="OpenScenarioState('AGT_ALERTING_DIALOG_EVENT')">
       </div>
       <div>
         TALKING
-        <input type="button" value="TALKING DIALOG EVENT" onclick="PutScenario('AGT_USER_EVENT', 'AGT_TALKING_USER_EVENT')">
+        <input type="button" value="TALKING DIALOG EVENT" onclick="PutScenario('USER_EVENT', 'AGT', 'AGT_TALKING_USER_EVENT')">
+        <input type="button" value="메시지 조회" onclick="OpenScenarioState('AGT_TALKING_USER_EVENT')">
       </div>
       <div>
         ACTIVE
-        <input type="button" value="ACTIVE DIALOG EVENT" onclick="PutScenario('AGT_DIALOG_EVENT', 'AGT_ACTIVE_DIALOG_EVENT')">
+        <input type="button" value="ACTIVE DIALOG EVENT" onclick="PutScenario('DIALOG_EVENT', 'AGT', 'AGT_ACTIVE_DIALOG_EVENT')">
+        <input type="button" value="메시지 조회" onclick="OpenScenarioState('AGT_ACTIVE_DIALOG_EVENT')">
       </div>
       <div>
         DROPPED
-        <input type="button" value="DROPPED DIALOG EVENT" onclick="PutScenario('AGT_DIALOG_EVENT', 'AGT_DROPPED_DIALOG_EVENT')">
+        <input type="button" value="DROPPED DIALOG EVENT" onclick="PutScenario('DIALOG_EVENT', 'AGT', 'AGT_DROPPED_DIALOG_EVENT')">
+        <input type="button" value="메시지 조회" onclick="OpenScenarioState('AGT_DROPPED_DIALOG_EVENT')">
       </div>
       <div>
         ACTIVE
-        <input type="button" value="WORK_READY USER EVENT" onclick="PutScenario('AGT_USER_EVENT', 'AGT_WORK_READY_USER_EVENT')">
+        <input type="button" value="WORK_READY USER EVENT" onclick="PutScenario('USER_EVENT', 'AGT', 'AGT_WORK_READY_USER_EVENT')">
+        <input type="button" value="메시지 조회" onclick="OpenScenarioState('AGT_WORK_READY_USER_EVENT')">
       </div>
       <h2>
         기본 2차 VOC 호 인입 시나리오
       </h2>
       <div>
+        DIALOG_ID<input id="ScenarioNextMgrDialogId" type="text">
+        <input type="button" value="State 조회" onclick="OpenDialogState(document.getElementById('ScenarioNextAgtDialogId').value)">
+      </div>
+      <h3>
+        2차호 이벤트
+      </h3>
+      <div>
         RESERVED
-        <input type="button" value="RESERVED USER EVENT" onclick="PutScenario('MGR_USER_EVENT', 'MGR_RESERVED_USER_EVENT')">
+        <input type="button" value="RESERVED USER EVENT" onclick="PutScenario('USER_EVENT', 'MGR', 'MGR_RESERVED_USER_EVENT')">
+        <input type="button" value="메시지 조회" onclick="OpenScenarioState('MGR_RESERVED_USER_EVENT')">
       </div>
       <div>
         ALERTING
-        <input type="button" value="ALERTING DIALOG EVENT" onclick="PutScenario('MGR_DIALOG_EVENT', 'MGR_ALERTING_DIALOG_EVENT')">
+        <input type="button" value="ALERTING DIALOG EVENT" onclick="PutScenario('DIALOG_EVENT', 'MGR', 'MGR_ALERTING_DIALOG_EVENT')">
+        <input type="button" value="메시지 조회" onclick="OpenScenarioState('MGR_ALERTING_DIALOG_EVENT')">
       </div>
       <div>
         ACTIVE(TRANSFER 인경우만 사용)
-        <input type="button" value="ACTIVE DIALOG EVENT" onclick="PutScenario('MGR_DIALOG_EVENT', 'MGR_ACTIVE_DIALOG_EVENT')">
+        <input type="button" value="ACTIVE DIALOG EVENT" onclick="PutScenario('DIALOG_EVENT', 'MGR', 'MGR_ACTIVE_DIALOG_EVENT')">
+        <input type="button" value="메시지 조회" onclick="OpenScenarioState('MGR_ACTIVE_DIALOG_EVENT')">
       </div>
       <div>
         TALKING
-        <input type="button" value="TALKING DIALOG EVENT" onclick="PutScenario('MGR_USER_EVENT', 'MGR_TALKING_USER_EVENT')">
+        <input type="button" value="TALKING DIALOG EVENT" onclick="PutScenario('USER_EVENT', 'MGR', 'MGR_TALKING_USER_EVENT')">
+        <input type="button" value="메시지 조회" onclick="OpenScenarioState('MGR_TALKING_USER_EVENT')">
       </div>
       <div>
         ACTIVE
-        <input type="button" value="ACTIVE DIALOG EVENT" onclick="PutScenario('MGR_DIALOG_EVENT', 'MGR_ACTIVE_DIALOG_EVENT')">
+        <input type="button" value="ACTIVE DIALOG EVENT" onclick="PutScenario('DIALOG_EVENT', 'MGR', 'MGR_ACTIVE_DIALOG_EVENT')">
+        <input type="button" value="메시지 조회" onclick="OpenScenarioState('MGR_ACTIVE_DIALOG_EVENT')">
       </div>
-
-      <form>
-        <input id="createDialogId" type="text">
-        <input id="CallPresentBtn" type="button" value="CallPresent" onclick="CallPresnt(document.getElementById('createDialogId').value)">
-        <input id="CallConnectBtn" type="button" value="CallConnect" onclick="CallPresnt(document.getElementById('createDialogId').value)">
-      </form>
-      <p>
-        UserId <input id="userId" type="text">
-        state <input id="userState" type="text">
-        <input id="XmppUserEventTestBtn" type="button" value="XmppUserEventTest" onclick="XmppUserEventTest(document.getElementById('userId').value)">
-      </p>
-      <p>
-        DialogId <input id="dialogId" type="text">
-        UserId <input id="userIdForDialog" type="text">
-        state <input id="dialogState" type="text">
-        <input id="XmppDialogEventTestBtn" type="button" value="XmppDialogEventTest" onclick="XmppDialogEventTest(document.getElementById('dialogId').value)">
-      </p>
       <p><a href="/finesse/views/SystemInfo">시스템인포</a></p>
     </body>
   </html>

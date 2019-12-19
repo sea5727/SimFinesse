@@ -21,6 +21,14 @@ router.post('/:id', expressAsyncHandler(async (req, res) => {
         return res.send(404, { message: 'already exists' })
     }
 
+    if(req.body == ''){
+        var { err, data } = await asyncFile.select(`./finesse/api/Dialog/DialogFormat.json`)
+        if (err) {
+            return res.send(404, { message: 'no datas' })
+        }
+        req.body = JSON.parse(data)
+    }
+
     var { err } = await asyncFile.update(`.${req.originalUrl}.json`, JSON.stringify(req.body, null, 4))
     if (err) {
         return res.status(500).send({ message: 'create fail' })//todo 실패 d응답

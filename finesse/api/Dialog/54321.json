@@ -1,0 +1,113 @@
+{
+    "Dialog": {
+        "associatedDialogUri": "",
+        "fromAddress": "",
+        "id": "",
+        "mediaProperties": {
+            "DNIS": "",
+            "callType": "",
+            "callvariables": {
+                "CallVariable": [
+                    {
+                        "name": "callVariable1",
+                        "value": ""
+                    },
+                    {
+                        "name": "callVariable2",
+                        "value": ""
+                    },
+                    {
+                        "name": "callVariable3",
+                        "value": ""
+                    },
+                    {
+                        "name": "callVariable4",
+                        "value": ""
+                    },
+                    {
+                        "name": "callVariable5",
+                        "value": ""
+                    },
+                    {
+                        "name": "callVariable6",
+                        "value": ""
+                    },
+                    {
+                        "name": "callVariable7",
+                        "value": ""
+                    },
+                    {
+                        "name": "callVariable8",
+                        "value": ""
+                    },
+                    {
+                        "name": "callVariable9",
+                        "value": ""
+                    },
+                    {
+                        "name": "callVariable10",
+                        "value": ""
+                    },
+                    {
+                        "name": "user.que",
+                        "value": ""
+                    },
+                    {
+                        "name": "user.ewt",
+                        "value": ""
+                    }
+                ]
+            },
+            "dialogNumber": "",
+            "mediaId": "",
+            "outboundClassification": "",
+            "wrapUpReason": ""
+        },
+        "mediaType": "",
+        "participants": [
+            {
+                "Participant": {
+                    "actions": {
+                        "action": [
+                            "TRANSFER_SST",
+                            "CONSULT_CALL",
+                            "HOLD",
+                            "UPDATE_CALL_DATA",
+                            "SEND_DTMF",
+                            "DROP"
+                        ]
+                    },
+                    "mediaAddress": "01073647757",
+                    "mediaAddressType": "",
+                    "startTime": "2019-05-21T04:07:38.017Z",
+                    "state": "ACTIVE",
+                    "stateCause": "",
+                    "stateChangeTime": "2019-05-21T04:07:38.017Z"
+                }
+            },
+            {
+                "Participant": {
+                    "actions": {
+                        "action": [
+                            "TRANSFER_SST",
+                            "CONSULT_CALL",
+                            "HOLD",
+                            "UPDATE_CALL_DATA",
+                            "SEND_DTMF",
+                            "DROP"
+                        ]
+                    },
+                    "mediaAddress": "5008",
+                    "mediaAddressType": "AGENT_DEVICE",
+                    "startTime": "2019-05-21T04:07:38.017Z",
+                    "state": "ACTIVE",
+                    "stateCause": "",
+                    "stateChangeTime": "2019-05-21T04:07:38.017Z"
+                }
+            }
+        ],
+        "state": "ALERTING",
+        "toAddress": "821343",
+        "uri": "/finesse/api/Dialog/156494657"
+    }
+}
