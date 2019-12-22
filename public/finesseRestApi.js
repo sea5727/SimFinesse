@@ -35,7 +35,7 @@ async function PostPutDialogUri(uri, method, formObject){
     const response = await fetch(uri, {
         method : method,
         headers : {
-            'Accept': 'Application/xmll',
+            'Accept': 'Application/xml',
             'Content-Type': 'Application/xml'
         },
         body : xmlFormat,

@@ -15,11 +15,17 @@ var x2j_options = {
     cdataTagName: "__cdata", //default is 'false'
     cdataPositionChar: "\\c",
     localeRange: "", //To support non english character in tag/attribute values.
-    parseTrueNumberOnly: false,
-    attrValueProcessor: a => he.decode(a, { isAttributeValue: true }),//default is a=>a
-    tagValueProcessor: a => he.decode(a) //default is a=>a
+    parseTrueNumberOnly: true,
+    attrValueProcessor: a => he.decode(String(a), { isAttributeValue: true }),//default is a=>a
+    tagValueProcessor: a => he.decode(String(a)) //default is a=>a
 };
 
+var parse2 = function(xmlData){
+    // Intermediate obj
+    var tObj = parser.getTraversalObj(xmlData,x2j_options);
+    var jsonObj = parser.convertToJson(tObj,x2j_options);
+    return jsonObj
+}
 
 var parse = function (xmlData) {
     return parser.parse(xmlData, x2j_options);
@@ -33,5 +39,6 @@ var validate = function (xmlData) {
 module.exports = {
     parser: parser,
     parse: parse,
+    parse2 : parse2,
     validate: validate
 }

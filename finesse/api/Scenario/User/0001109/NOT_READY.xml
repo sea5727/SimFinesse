@@ -1,0 +1,21 @@
+<user>
+  <dialogs>/finesse/api/User/0001109/Dialogs</dialogs>
+  <extension>6007</extension>
+  <firstName>준</firstName>
+  <lastName>이</lastName>
+  <loginId>0001109</loginId>
+  <loginName>0001109</loginName>
+  <mediaType>1</mediaType>
+  <pendingState></pendingState>
+  <roles>
+    <role>Agent</role>
+  </roles>
+  <settings>
+    <wrapUpOnIncoming>REQUIRED</wrapUpOnIncoming>
+  </settings>
+  <state>NOT_READY</state>
+  <stateChangeTime>2019-12-11T06:59:10.243Z</stateChangeTime>
+  <teamId>5056</teamId>
+  <teamName>CM_PIM2.T_0_SPT</teamName>
+  <uri>/finesse/api/User/0001109</uri>
+</user>

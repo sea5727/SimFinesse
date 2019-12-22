@@ -12,9 +12,7 @@ const XmppUserEventFormatUsingObject = (UserId, dataObj) => {
     let update = {
         update: {
             data: {
-                dialogs : {
-                    '#text': dataFormat
-                }
+                '#text': dataFormat
             },
             event: { '#text': 'PUT' },
             requestId: { '#text': '' },

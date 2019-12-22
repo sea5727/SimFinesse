@@ -1,3 +1,4 @@
+const builder = require('xmlbuilder');
 var Parser = require("fast-xml-parser").j2xParser;
 var he = require("he");
 
@@ -12,10 +13,25 @@ var defaultOptions = {
     format: false,
     indentBy: "  ",
     supressEmptyNode: false,
-    tagValueProcessor: a => he.encode(a, { useNamedReferences: true }),// default is a=>a
-    attrValueProcessor: a => he.encode(a, { isAttributeValue: isAttribute, useNamedReferences: true })// default is a=>a
+    parseTrueNumberOnly : true,
+    tagValueProcessor: a => he.encode(String(a), { useNamedReferences: true }),// default is a=>a
+    attrValueProcessor: a => he.encode(String(a), { isAttributeValue: isAttribute, useNamedReferences: true })// default is a=>a
 };
 var parser = new Parser(defaultOptions);
+
+var parse2 = function(json_or_json_obj){
+    let update = {
+        update: {
+            data: {
+                dialogs : {
+                    '#text': json_or_json_obj
+                }
+            },
+        }
+    }
+    return builder.create(update, { headless: true }).end({ pretty: true })
+    
+}
 
 var parse = function (json_or_json_obj) {
     return parser.parse(json_or_json_obj);
@@ -56,4 +72,5 @@ var event = function () {
 module.exports = {
     parser: parser,
     parse: parse,
+    parse2 : parse2,
 }

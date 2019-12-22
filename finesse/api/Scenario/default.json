@@ -1,0 +1,29 @@
+{
+    "Default": {
+        "Scenario_Calling": "01050698361",
+        "Scenario_LoginId_Agt": "840000009",
+        "Scenario_Extension_Agt": "3004",
+        "Scenario_LoginId_Mgr": "0001109",
+        "Scenario_Extension_Mgr": "4321",
+        "Scenario_DialogId_Agt": "156494662",
+        "Scenario_DialogId_Mgr": "156494663"
+    },
+    "Scenarios": {
+        "Scenario": [
+            {
+                "Name": "1차호 시나리오",
+                "Events": [
+                    "ALERTING",
+                    "ACTIVE"
+                ]
+            },
+            {
+                "Name": "2차호 시나리오",
+                "Events": [
+                    "ALERTING",
+                    "ACTIVE"
+                ]
+            }
+        ]
+    }
+}

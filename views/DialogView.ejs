@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html lang="ko">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="http://192.168.0.25:3000/public/xml2json.js"></script>
+    <script type="text/javascript" src="http://192.168.0.25:3000/public/json2xml.js"></script>
+    <script type="text/javascript" src="http://192.168.0.25:3000/public/finesseRestApi.js"></script>
+    <script type="text/javascript" src="http://192.168.0.25:3000/public/jquery.serialize-object.js"></script>
+    <meta charset="UTF-8">
+    <title>SimFinesse</title>
+</head>
+<body>
+    <script>
+        let startDialog = `<%- Dialog %>`
+        $(document).ready(function(){
+            console.log(window.location.host)
+            console.log(window.location.pathname)
+            console.log(startDialog)
+            objDialog = JSON.parse(startDialog)
+            ElementSettingFromObject(objDialog, 'mainDiv')
+        })
+        async function PostPutDialog(uri, method, formObject){
+            let xmlFormat = json2xml(formObject, ' ')
+            const response = await fetch(uri, {
+                method : method,
+                headers : {
+                    'Accept': 'Application/xml',
+                    'Content-Type': 'Application/xml'
+                },
+                body : xmlFormat,
+            })
+            if(!response.ok) {
+                const ret = await response.json()
+                alert(`fail ${ret.message}`)
+                return
+            }
+            alert('success')
+            if(response.redirected){
+                window.location.href = response.url
+            }
+        }
+        async function sendCreate(){
+            let path = window.location.pathname
+            path = path.replace(`/views/`, `/api/`)
+            let formObject = $("#mainForm").serializeObject()
+            console.log('sendCreate path : ', path)
+            await PostPutDialogUri(`http://192.168.0.25:3000${path}`, 'post', formObject)
+        }
+        async function sendUpdate(){
+            let path = window.location.pathname
+            path = path.replace(`/views/`, `/api/`)
+            let formObject = $("#mainForm").serializeObject()
+            await PostPutDialogUri(`http://192.168.0.25:3000${path}`, 'put', formObject)
+        }
+        async function sendDelete(){
+            await DeleteDialogUri(`http://192.168.0.25:3000${window.location.pathname}`)
+        }
+        async function sendSelect(){
+            let path = window.location.pathname
+            path = path.replace(`/views/`, `/api/`)
+            let obj = await GetUri_SetElement(`http://192.168.0.25:3000${path}`, 'mainDiv')
+            ElementSettingFromObject(obj , 'mainDiv')
+        }
+        //
+    </script>
+
+    <div id="divDialog">
+    <!-- http://192.168.0.25:3000/finesse/api/Dialog -->
+    <form id='mainForm' action='' method="POST" name="form">
+        <!--<input id="createBtn" type="button" value="생성" onclick="sendCreate()">-->
+        <input id="selectBtn" type="button" value="조회" onclick="sendSelect()">
+        <input id="updateBtn" type="button" value="수정" onclick="sendUpdate()">
+        <!--<input id="deleteBtn" type="button" value="삭제" onclick="sendDelete()">-->
+        <div id='mainDiv'>
+            <!-- 여기 dialog object가 들어감-->
+        </div>
+    </form>
+    </div>
+
+</body>
+</html>

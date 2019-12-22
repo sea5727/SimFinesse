@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html lang="ko">
+        
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="http://192.168.0.25:3000/public/xml2json.js"></script>
+    <script type="text/javascript" src="http://192.168.0.25:3000/public/json2xml.js"></script>
+    <script type="text/javascript" src="http://192.168.0.25:3000/public/finesseRestApi.js"></script>
+    <script type="text/javascript" src="http://192.168.0.25:3000/public/jquery.serialize-object.js"></script>
+    <meta charset="UTF-8">
+    <title>SimFinesse</title>
+    <!-- <link rel="stylesheet" href="stylesheets/style.css" /> -->
+</head>
+
+<body>
+    <script>
+        let Scenario = `<%- Scenario %>`
+        $(document).ready(function(){
+            console.log(Scenario)
+            objDialog = JSON.parse(Scenario)
+            
+            ElementSettingFromObject(objDialog, 'mainDiv')
+            
+        })
+
+        async function sendCreate(id){
+            if(isNaN(id) == true){
+                alert('fail : User 숫자만')
+                return
+            }
+            let formObject = $("#mainForm").serializeObject()
+            await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/Dialog/${id}`, 'post', formObject)
+        }
+        async function sendUpdate(id){
+            if(isNaN(id) == true){
+                alert('fail : User 숫자만')
+                return
+            }
+            let formObject = $("#mainForm").serializeObject()
+            await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/Dialog/${id}`, 'put', formObject)
+        }
+        async function sendDelete(id){
+            if(isNaN(id) == true){
+                alert('fail : DialogId는 숫자만')
+                return
+            }
+            
+            await DeleteDialogUri(`http://192.168.0.25:3000/finesse/api/Dialog/${id}`)
+        }
+        async function sendSelect(id){
+            let obj = await GetUri_SetElement(`http://192.168.0.25:3000/finesse/api/Dialog/${id}`, 'mainDiv')
+            ElementSettingFromObject(obj , 'mainDiv')
+            document.getElementById('subId').value = id
+        }
+
+    </script>
+
+    <!-- http://192.168.0.25:3000/finesse/api/Dialog -->
+    <form id='mainForm' action='' method="POST" name="form">
+        
+        <input id="createBtn" type="button" value="생성" onclick="sendCreate(document.getElementById('subId').value)">
+        <input id="selectBtn" type="button" value="조회" onclick="sendSelect(document.getElementById('subId').value)">
+        <input id="updateBtn" type="button" value="수정" onclick="sendUpdate(document.getElementById('subId').value)">
+        <input id="deleteBtn" type="button" value="삭제" onclick="sendDelete(document.getElementById('subId').value)">
+        DialogID: 
+        <input id="subId" type="text">
+        
+        <div id='mainDiv'>
+            <!-- 여기 dialog object가 들어감-->
+        </div>
+        
+        <!-- <input id="dialogSubmit" type="submit" value="안됨" onclick=""> -->
+    </form>
+    
+</body>
+
+</html>

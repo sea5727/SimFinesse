@@ -1,77 +1,139 @@
-<!DOCTYPE HTML>
-<html lang="ko">
-        
-<head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script type="text/javascript" src="http://192.168.0.25:3000/public/xml2json.js"></script>
-    <script type="text/javascript" src="http://192.168.0.25:3000/public/json2xml.js"></script>
-    <script type="text/javascript" src="http://192.168.0.25:3000/public/finesseRestApi.js"></script>
-    <script type="text/javascript" src="http://192.168.0.25:3000/public/jquery.serialize-object.js"></script>
-    <meta charset="UTF-8">
-    <title>SimFinesse</title>
-    <!-- <link rel="stylesheet" href="stylesheets/style.css" /> -->
-</head>
 
-<body>
-    <script>
-        let Scenario = `<%- Scenario %>`
-        $(document).ready(function(){
-            console.log(Scenario)
-            objDialog = JSON.parse(Scenario)
-            
-            ElementSettingFromObject(objDialog, 'mainDiv')
-            
-        })
+<html>
+    <head>
+      SimFinesse
+      <script type="text/javascript" src="http://192.168.0.25:3000/public/SimFinesseHttp.js"></script>
+    </head>
+    <body>
+      <script>
+        function OpenDialogState(id, event){
+          window.open(`/finesse/views/Scenario/Dialog/${id}/${event}`, "a", "width=1000, height=1500, left=100, top=50"); 
+        }
 
-        async function sendCreate(id){
-            if(isNaN(id) == true){
-                alert('fail : User 숫자만')
-                return
+        async function test(id, loginId){ 
+          console.log(id)
+          let body = {
+            Dialog : {
+              RequestAction : 'SendEvent',
+              AgentId : loginId,
             }
-            let formObject = $("#mainForm").serializeObject()
-            await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/Dialog/${id}`, 'post', formObject)
+          }
+          await PutOrPostApi(`http://192.168.0.25:3000/finesse/api/Scenario/${id}`, 'PUT', body)
         }
-        async function sendUpdate(id){
-            if(isNaN(id) == true){
-                alert('fail : User 숫자만')
-                return
-            }
-            let formObject = $("#mainForm").serializeObject()
-            await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/Dialog/${id}`, 'put', formObject)
-        }
-        async function sendDelete(id){
-            if(isNaN(id) == true){
-                alert('fail : DialogId는 숫자만')
-                return
-            }
-            
-            await DeleteDialogUri(`http://192.168.0.25:3000/finesse/api/Dialog/${id}`)
-        }
-        async function sendSelect(id){
-            let obj = await GetUri_SetElement(`http://192.168.0.25:3000/finesse/api/Dialog/${id}`, 'mainDiv')
-            ElementSettingFromObject(obj , 'mainDiv')
-            document.getElementById('subId').value = id
-        }
+        function SetScenarioValue(obj){
+          document.getElementById('Scenario_Calling').value = obj.Default.Scenario_Calling
+          document.getElementById('Scenario_LoginId_Agt').value = obj.Default.Scenario_LoginId_Agt
+          document.getElementById('Scenario_Extension_Agt').value = obj.Default.Scenario_Extension_Agt
+          document.getElementById('Scenario_LoginId_Mgr').value = obj.Default.Scenario_LoginId_Mgr
+          document.getElementById('Scenario_Extension_Mgr').value = obj.Default.Scenario_Extension_Mgr
+          document.getElementById('Scenario_DialogId_Agt').value = obj.Default.Scenario_DialogId_Agt
+          document.getElementById('Scenario_DialogId_Mgr').value = obj.Default.Scenario_DialogId_Mgr
 
-    </script>
+          let currentDiv = document.getElementById('ScenarioDiv')
+          currentDiv.innerHTML = ''
 
-    <!-- http://192.168.0.25:3000/finesse/api/Dialog -->
-    <form id='mainForm' action='' method="POST" name="form">
-        
-        <input id="createBtn" type="button" value="생성" onclick="sendCreate(document.getElementById('subId').value)">
-        <input id="selectBtn" type="button" value="조회" onclick="sendSelect(document.getElementById('subId').value)">
-        <input id="updateBtn" type="button" value="수정" onclick="sendUpdate(document.getElementById('subId').value)">
-        <input id="deleteBtn" type="button" value="삭제" onclick="sendDelete(document.getElementById('subId').value)">
-        DialogID: 
-        <input id="subId" type="text">
-        
-        <div id='mainDiv'>
-            <!-- 여기 dialog object가 들어감-->
+
+          let _ScenarioDiv = document.createElement('div')
+          console.log(obj.Scenarios)
+          
+          for(scenarioIdx in obj.Scenarios.Scenario){
+            let ScenarioName = obj.Scenarios.Scenario[scenarioIdx].Name
+            let LoginId = ``
+            let DialogId = ``
+            if(scenarioIdx == '0'){
+              LoginId = obj.Default.Scenario_LoginId_Agt
+              DialogId = obj.Default.Scenario_DialogId_Agt
+            }
+            else if(scenarioIdx == '1'){
+              LoginId = obj.Default.Scenario_LoginId_Mgr
+              DialogId = obj.Default.Scenario_DialogId_Mgr
+            }
+            _ScenarioDiv.innerHTML += `<h3>${ScenarioName} DialogId : ${DialogId}</h3>`
+            for(eventIdx in obj.Scenarios.Scenario[scenarioIdx].Events){
+              let EventName = obj.Scenarios.Scenario[scenarioIdx].Events[eventIdx]
+              let btnEventId = `Dialog/${DialogId}/${EventName}`
+              _ScenarioDiv.innerHTML += 
+              `<div>
+                ${EventName}
+                <input id="${btnEventId}" type="button" value="${EventName} 내리기" onclick="test(this.id, '${LoginId}')">
+                <input type="button" value="조회" onclick="OpenDialogState(${DialogId}, '${EventName}')">
+                <a href="/finesse/views/Scenario/Dialog/${DialogId}/${EventName}">테스트</a>
+              </div>`
+            }
+          }
+          currentDiv.insertAdjacentElement('beforeend', _ScenarioDiv)
+        }
+        function GetScenarioValue(){
+          return {
+            Default : {
+              Scenario_Calling : document.getElementById('Scenario_Calling').value,
+              Scenario_LoginId_Agt : document.getElementById('Scenario_LoginId_Agt').value,
+              Scenario_Extension_Agt : document.getElementById('Scenario_Extension_Agt').value,
+              Scenario_LoginId_Mgr : document.getElementById('Scenario_LoginId_Mgr').value,
+              Scenario_Extension_Mgr : document.getElementById('Scenario_Extension_Mgr').value,
+              Scenario_DialogId_Agt : document.getElementById('Scenario_DialogId_Agt').value,
+              Scenario_DialogId_Mgr : document.getElementById('Scenario_DialogId_Mgr').value
+            }
+          }
+        }
+        async function GetApiAndSetDefaultScenario(url){
+          let objResponse = await GetApi(url)
+          if(objResponse == null) return
+          SetScenarioValue(objResponse)
+        }
+        async function PutApiDefaultScenario(url){
+          body = GetScenarioValue()
+          let objResponse = await PutOrPostApi(url, 'PUT', body)
+        }
+        async function PutApiScenarioEvent(url){
+
+          console.log(url)
+        }
+      </script>
+      <h1>
+        유저
+      </h1>
+      <p><a href="/finesse/views/User">유저CRUD</a></p>
+      <h1>
+        다이얼로그
+      </h1>
+      <p><a href="/finesse/views/Dialog">다이얼로그CRUD</a></p>
+      <div>
+        <h1>
+          시나리오
+        </h1>
+        <p>인입번호<input id="Scenario_Calling" type="text"></p>
+        <div>
+          <p>
+            1차 사번<input id="Scenario_LoginId_Agt" type="text">
+            1차 내선<input id="Scenario_Extension_Agt" type="text">
+            <input type="button" value="State 조회" onclick="">
+          </p>
         </div>
-        
-        <!-- <input id="dialogSubmit" type="submit" value="안됨" onclick=""> -->
-    </form>
-    
-</body>
+        <div>
+          <p>
+            2차 사번<input id="Scenario_LoginId_Mgr" type="text">
+            2차 내선<input id="Scenario_Extension_Mgr" type="text">
+            <input type="button" value="State 조회" onclick="">
+          </p>
+        </div>
+        <div>
+          <p>
+            1차호 DialogId<input id="Scenario_DialogId_Agt" type="text">
+            <input type="button" value="State 조회" onclick="">
+          </p>
+        </div>
+        <div>
+          <p>
+            2차호 DialogId<input id="Scenario_DialogId_Mgr" type="text">
+            <input type="button" value="State 조회" onclick="">
+          </p>
+        </div>
+        <input type="button" value="조회" onclick="GetApiAndSetDefaultScenario('http://192.168.0.25:3000/finesse/api/Scenario/default')">
+        <input type="button" value="수정" onclick="PutApiDefaultScenario('http://192.168.0.25:3000/finesse/api/Scenario/default')">
+      </div>
+      <div id="ScenarioDiv">
 
-</html>
+      </div>
+    </body>
+  </html>

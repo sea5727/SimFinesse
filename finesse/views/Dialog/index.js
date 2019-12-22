@@ -8,7 +8,10 @@ router.get('/' , expressAsyncHandler( async (req, res) => {
     var { err , data } = await asyncFile.select(`./finesse/api/Dialog/DialogFormat.json`)
     if(err)
         return res.status(500).send({ message: 'unknown id' })
-    return res.render('Dialog', {Dialog : data})
+    return res.render('Dialog', {
+        Dialog : data,
+        Url : `/finesse/api/Dialog`
+    })
 }))
 
 
@@ -16,7 +19,10 @@ router.get('/:id' , expressAsyncHandler( async (req, res) => {
     var { err , data } = await asyncFile.select(`./finesse/api/Dialog/${req.params.id}.json`)
     if(err)
         return res.status(500).send({ message: 'unknown id' })
-    return res.render('Dialog', {Dialog : data})
+    return res.render('Dialog', {
+        Dialog : data,
+        Url : `/finesse/api/Dialog`
+    })
 }))
 
 module.exports = router;

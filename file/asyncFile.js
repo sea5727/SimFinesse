@@ -70,8 +70,22 @@ exports.readdir = async function(path){
         return { err,  filelist }
     }
     catch(exception){
-        return { exception,  filelist }
+        err = exception
+        return { err,  filelist }
     }
     
 }
 
+exports.lstat = async function(path){
+    var err = null
+    var stats = null
+    try{
+        stats = await fs.lstat(path)
+        return  { err, stats }
+    }
+    catch(exception){
+        err = exception
+        return { err,  filelist }
+    }
+    
+}
