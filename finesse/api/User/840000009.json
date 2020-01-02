@@ -14,7 +14,7 @@
         "settings": {
             "wrapUpOnIncoming": "REQUIRED"
         },
-        "state": "READY",
+        "state": "LOGOUT",
         "stateChangeTime": "2019-12-18T07:31:57Z",
         "teamId": "1",
         "teamName": "Default",

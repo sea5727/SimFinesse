@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "start" : "node index.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,6 +22,7 @@
   "homepage": "https://github.com/sea5727/SimFinesse#readme",
   "dependencies": {
     "body-parser-xml": "^1.1.0",
+    "commander": "^4.0.1",
     "dateformat": "^3.0.3",
     "deepmerge": "^4.2.2",
     "ejs": "^3.0.1",
