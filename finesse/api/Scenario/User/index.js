@@ -5,6 +5,7 @@ const parser_xj2 = require('../../../../utils/parser-x2j')
 const expressAsyncHandler = require('express-async-handler')
 
 router.get('/:id', expressAsyncHandler( async (req, res) => {
+    logger.info(`[HTTP] ${req.method} ${req.originalUrl} : ${JSON.stringify(req.body)}`)
     var {err, data} = await asyncFile.select(`.${req.originalUrl}.xml`)
     if(err)
         return res.status(500).send({ message: 'no exist user' })
@@ -13,6 +14,7 @@ router.get('/:id', expressAsyncHandler( async (req, res) => {
 }))
 
 router.get('/:id/*', expressAsyncHandler( async (req, res) => {
+    logger.info(`[HTTP] ${req.method} ${req.originalUrl} : ${JSON.stringify(req.body)}`)
     var {err, data} = await asyncFile.select(`.${req.originalUrl}.xml`)
     if(err)
         return res.status(500).send({ message: 'no exist user' })

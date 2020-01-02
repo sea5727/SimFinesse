@@ -2,23 +2,30 @@
 <html>
     <head>
       SimFinesse
-      <script type="text/javascript" src="http://192.168.0.25:3000/public/SimFinesseHttp.js"></script>
+      <script type="text/javascript" src="http://192.168.0.207:3000/public/SimFinesseHttp.js"></script>
     </head>
     <body>
       <script>
-        function OpenDialogState(id, event){
-          window.open(`/finesse/views/Scenario/Dialog/${id}/${event}`, "a", "width=1000, height=1500, left=100, top=50"); 
+        function OpenDialogState(type, id, event){
+          console.log(`OpenDialogState type: ${type} , id:${id}, event:${event}`)
+          window.open(`/finesse/views/Scenario/${type}/${id}/${event}`, "a", "width=1000, height=1500, left=100, top=50"); 
         }
 
-        async function test(id, loginId){ 
+        async function PutReqSendEvent(id, scenarioLoginId, scenarioExtension){ 
+          console.log(`PutReqSendEvent.. id:${id}, scenarioLoginId:${scenarioLoginId}, scenarioExtension:${scenarioExtension}`)
+          let fromAddress = document.getElementById('Scenario_Calling').value
+          let loginId = document.getElementById(scenarioLoginId).value
+          let extension = document.getElementById(scenarioExtension).value
           console.log(id)
           let body = {
-            Dialog : {
+            VO : {
               RequestAction : 'SendEvent',
+              FromAddress : fromAddress,
               AgentId : loginId,
+              Extension : extension
             }
           }
-          await PutOrPostApi(`http://192.168.0.25:3000/finesse/api/Scenario/${id}`, 'PUT', body)
+          await PutOrPostApi(`http://192.168.0.207:3000/finesse/api/Scenario/${id}`, 'PUT', body)
         }
         function SetScenarioValue(obj){
           document.getElementById('Scenario_Calling').value = obj.Default.Scenario_Calling
@@ -38,26 +45,37 @@
           
           for(scenarioIdx in obj.Scenarios.Scenario){
             let ScenarioName = obj.Scenarios.Scenario[scenarioIdx].Name
+            let ScenarioLoginId = ``
+            let ScenarioDialogId = ``
+            let ScenarioExtension = ``
             let LoginId = ``
             let DialogId = ``
             if(scenarioIdx == '0'){
               LoginId = obj.Default.Scenario_LoginId_Agt
               DialogId = obj.Default.Scenario_DialogId_Agt
+              ScenarioLoginId = 'Scenario_LoginId_Agt'
+              ScenarioDialogId = 'Scenario_DialogId_Agt'
+              ScenarioExtension = 'Scenario_Extension_Agt'
             }
             else if(scenarioIdx == '1'){
-              LoginId = obj.Default.Scenario_LoginId_Mgr
+              LoginId = obj.Default.Scenario_LoginId_Agt
               DialogId = obj.Default.Scenario_DialogId_Mgr
+              ScenarioLoginId = 'Scenario_LoginId_Mgr'
+              ScenarioDialogId = 'Scenario_DialogId_Mgr'
+              ScenarioExtension = 'Scenario_Extension_Mgr'
             }
-            _ScenarioDiv.innerHTML += `<h3>${ScenarioName} DialogId : ${DialogId}</h3>`
+            _ScenarioDiv.innerHTML += `<h3>${ScenarioName} DialogId : ${DialogId} LoginId : ${LoginId} </h3>`
             for(eventIdx in obj.Scenarios.Scenario[scenarioIdx].Events){
-              let EventName = obj.Scenarios.Scenario[scenarioIdx].Events[eventIdx]
-              let btnEventId = `Dialog/${DialogId}/${EventName}`
+              let EventName = obj.Scenarios.Scenario[scenarioIdx].Events[eventIdx].name
+              let type = obj.Scenarios.Scenario[scenarioIdx].Events[eventIdx].type
+              let Id = type == 'Dialog' ? DialogId : LoginId
+              let btnEventId = `${type}/${Id}/${EventName}`
+              console.log(`make : name:${name}, type:${type}, EventName:${EventName}`)
               _ScenarioDiv.innerHTML += 
               `<div>
                 ${EventName}
-                <input id="${btnEventId}" type="button" value="${EventName} 내리기" onclick="test(this.id, '${LoginId}')">
-                <input type="button" value="조회" onclick="OpenDialogState(${DialogId}, '${EventName}')">
-                <a href="/finesse/views/Scenario/Dialog/${DialogId}/${EventName}">테스트</a>
+                <input id="${btnEventId}" type="button" value="${EventName} 내리기" onclick="PutReqSendEvent(this.id, '${ScenarioLoginId}', '${ScenarioExtension}')">
+                <input type="button" value="조회" onclick="OpenDialogState('${type}', ${Id}, '${EventName}')">
               </div>`
             }
           }
@@ -129,8 +147,8 @@
             <input type="button" value="State 조회" onclick="">
           </p>
         </div>
-        <input type="button" value="조회" onclick="GetApiAndSetDefaultScenario('http://192.168.0.25:3000/finesse/api/Scenario/default')">
-        <input type="button" value="수정" onclick="PutApiDefaultScenario('http://192.168.0.25:3000/finesse/api/Scenario/default')">
+        <input type="button" value="조회" onclick="GetApiAndSetDefaultScenario('http://192.168.0.207:3000/finesse/api/Scenario/default')">
+        <input type="button" value="수정" onclick="PutApiDefaultScenario('http://192.168.0.207:3000/finesse/api/Scenario/default')">
       </div>
       <div id="ScenarioDiv">
 

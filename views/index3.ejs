@@ -2,10 +2,10 @@
 <html>
     <head>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-      <script type="text/javascript" src="http://192.168.0.25:3000/public/xml2json.js"></script>
-      <script type="text/javascript" src="http://192.168.0.25:3000/public/json2xml.js"></script>
-      <script type="text/javascript" src="http://192.168.0.25:3000/public/finesseRestApi.js"></script>
-      <script type="text/javascript" src="http://192.168.0.25:3000/public/jquery.serialize-object.js"></script>
+      <script type="text/javascript" src="http://192.168.0.207:3000/public/xml2json.js"></script>
+      <script type="text/javascript" src="http://192.168.0.207:3000/public/json2xml.js"></script>
+      <script type="text/javascript" src="http://192.168.0.207:3000/public/finesseRestApi.js"></script>
+      <script type="text/javascript" src="http://192.168.0.207:3000/public/jquery.serialize-object.js"></script>
       Simm Finesse
     </head>
     <body>
@@ -37,7 +37,7 @@
               state : dialogState
             }
           }
-          await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/Dialog/${dialogId}`, 'put', formObject)
+          await PostPutDialogUri(`http://192.168.0.207:3000/finesse/api/Dialog/${dialogId}`, 'put', formObject)
         }
       </script>
 
@@ -66,10 +66,10 @@
               }
             }
           }
-          await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/Scenario/${scenarioId}`, 'put', formObject)
+          await PostPutDialogUri(`http://192.168.0.207:3000/finesse/api/Scenario/${scenarioId}`, 'put', formObject)
         }
         async function GetScenario(queryString){
-          let response = await fetch(`http://192.168.0.25:3000/finesse/api/Scenario/${queryString}`)
+          let response = await fetch(`http://192.168.0.207:3000/finesse/api/Scenario/${queryString}`)
           if(!response.ok){
               const ret = await response.json()
               console.log(ret)

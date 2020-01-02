@@ -1,5 +1,5 @@
 const builder = require('xmlbuilder');
-
+const parser_x2j = require('../../utils/parser-x2j')
 const XmppUserEventFormatUsingObject = (UserId, dataObj) => {
 
     var dataFormat = JSON.parse(JSON.stringify(dataObj));
@@ -52,7 +52,10 @@ const XmppDialogEventFormatUsingObject = (UserId, dataObj) => {
     let update = {
         Update : {
             data: {
-                '#text': dataFormat
+                dialogs : {
+                    '#text': dataFormat
+                }
+                
             },
             event: { '#text': 'PUT' },
             requestId: { '#text': '' },
@@ -128,10 +131,13 @@ const XmppEventFormatUsingString = (UserId, strXmlData) => {
 }
 
 const XmppDialogEventFormatUsingString = (UserId, strXmlData) => {
+    let objXmlData = parser_x2j.parse(strXmlData)
     let update = {
-        update: {
+        Update: {
             data: {
-                '#text': strXmlData
+                dialogs : {
+                    '#text': objXmlData
+                }
             },
             event: { '#text': 'PUT' },
             requestId: { '#text': '' },

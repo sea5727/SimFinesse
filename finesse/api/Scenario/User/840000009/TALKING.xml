@@ -13,7 +13,7 @@
   <settings>
     <wrapUpOnIncoming>REQUIRED</wrapUpOnIncoming>
   </settings>
-  <state>RESERVED</state>
+  <state>TALKING</state>
   <stateChangeTime>2019-12-11T06:59:10.243Z</stateChangeTime>
   <teamId>5056</teamId>
   <teamName>CM_PIM2.T_0_SPT</teamName>

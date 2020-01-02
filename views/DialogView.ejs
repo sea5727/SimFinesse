@@ -2,10 +2,10 @@
 <html lang="ko">
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script type="text/javascript" src="http://192.168.0.25:3000/public/xml2json.js"></script>
-    <script type="text/javascript" src="http://192.168.0.25:3000/public/json2xml.js"></script>
-    <script type="text/javascript" src="http://192.168.0.25:3000/public/finesseRestApi.js"></script>
-    <script type="text/javascript" src="http://192.168.0.25:3000/public/jquery.serialize-object.js"></script>
+    <script type="text/javascript" src="http://192.168.0.207:3000/public/xml2json.js"></script>
+    <script type="text/javascript" src="http://192.168.0.207:3000/public/json2xml.js"></script>
+    <script type="text/javascript" src="http://192.168.0.207:3000/public/finesseRestApi.js"></script>
+    <script type="text/javascript" src="http://192.168.0.207:3000/public/jquery.serialize-object.js"></script>
     <meta charset="UTF-8">
     <title>SimFinesse</title>
 </head>
@@ -44,28 +44,28 @@
             path = path.replace(`/views/`, `/api/`)
             let formObject = $("#mainForm").serializeObject()
             console.log('sendCreate path : ', path)
-            await PostPutDialogUri(`http://192.168.0.25:3000${path}`, 'post', formObject)
+            await PostPutDialogUri(`http://192.168.0.207:3000${path}`, 'post', formObject)
         }
         async function sendUpdate(){
             let path = window.location.pathname
             path = path.replace(`/views/`, `/api/`)
             let formObject = $("#mainForm").serializeObject()
-            await PostPutDialogUri(`http://192.168.0.25:3000${path}`, 'put', formObject)
+            await PostPutDialogUri(`http://192.168.0.207:3000${path}`, 'put', formObject)
         }
         async function sendDelete(){
-            await DeleteDialogUri(`http://192.168.0.25:3000${window.location.pathname}`)
+            await DeleteDialogUri(`http://192.168.0.207:3000${window.location.pathname}`)
         }
         async function sendSelect(){
             let path = window.location.pathname
             path = path.replace(`/views/`, `/api/`)
-            let obj = await GetUri_SetElement(`http://192.168.0.25:3000${path}`, 'mainDiv')
+            let obj = await GetUri_SetElement(`http://192.168.0.207:3000${path}`, 'mainDiv')
             ElementSettingFromObject(obj , 'mainDiv')
         }
         //
     </script>
 
     <div id="divDialog">
-    <!-- http://192.168.0.25:3000/finesse/api/Dialog -->
+    <!-- http://192.168.0.207:3000/finesse/api/Dialog -->
     <form id='mainForm' action='' method="POST" name="form">
         <!--<input id="createBtn" type="button" value="생성" onclick="sendCreate()">-->
         <input id="selectBtn" type="button" value="조회" onclick="sendSelect()">

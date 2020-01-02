@@ -52,7 +52,7 @@ async function getScenarioList(url){
 }
 
 router.get('/', expressAsyncHandler( async (req, res) => {
-
+    logger.info(`[HTTP] ${req.method} ${req.originalUrl} : ${JSON.stringify(req.body)}`)
     var { err, data } = await asyncFile.select(`./finesse/api/Scenario/default.json`)
     if(err) return res.status(500).send({ message: 'no exist dialog' })
     let scenario_default = JSON.parse(data)
@@ -101,6 +101,7 @@ router.get('/', expressAsyncHandler( async (req, res) => {
 
 
 router.get('/:id', expressAsyncHandler( async (req, res) => {
+    logger.info(`[HTTP] ${req.method} ${req.originalUrl} : ${JSON.stringify(req.body)}`)
     let List = await getScenarioList(`.${req.originalUrl}`)
     console.log('list')
     
@@ -115,6 +116,7 @@ router.get('/:id', expressAsyncHandler( async (req, res) => {
 
 
 router.get('/:id/*', expressAsyncHandler( async (req, res) => {
+    logger.info(`[HTTP] ${req.method} ${req.originalUrl} : ${JSON.stringify(req.body)}`)
     var {err, data} = await asyncFile.select(`.${req.originalUrl}.xml`)
     if(err)
         return res.status(500).send({ message: 'no exist dialog' })
@@ -123,6 +125,7 @@ router.get('/:id/*', expressAsyncHandler( async (req, res) => {
 }))
 
 router.put('/:id/*', expressAsyncHandler( async (req, res) => {
+    logger.info(`[HTTP] ${req.method} ${req.originalUrl} : ${JSON.stringify(req.body)}`)
     let xml = parser_j2x.parse(req.body)
     console.log(xml)
     var {err} = await asyncFile.update(`.${req.originalUrl}.xml`, xml)

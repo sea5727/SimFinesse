@@ -89,20 +89,54 @@ router.put('/Test', expressAsyncHandler(async (req, res) => {
     console.log('Test')
 }))
 
-router.put('/:type/:dialogId/:eventName', expressAsyncHandler(async (req, res, next) => {
-    if(!'Dialog' in req.body || !'RequestAction' in req.body.Dialog){
+router.put('/:type/:id/:eventName', expressAsyncHandler(async (req, res, next) => {
+    logger.info(`[HTTP] ${req.method} ${req.originalUrl} : ${JSON.stringify(req.body)}`)
+    if(!'Dialog' in req.body || !'RequestAction' in req.body.VO){
         next()
     }
-    let request = req.body.Dialog.RequestAction
+    let request = req.body.VO.RequestAction
     if(request == 'SendEvent'){
         var {err, data} = await asyncFile.select(`.${req.originalUrl}.xml`) 
-        let agentId = req.body.Dialog.AgentId
-        if(err)return res.status(500).send({ message: 'select err' })
-        let xmppSession = FinesseMemory.get_xmpp(agentId)
+        let fromAddress = req.body.VO.FromAddress
+        let agentId = req.body.VO.AgentId
+        let extension = req.body.VO.Extension
+        if(err) return res.status(500).send({ message: 'select err' })
 
-        //if(xmppSession == null ) return res.status(500).send({ message: 'no xmpp session' })
-        let xml = xmlFormat.XmppDialogEventFormatUsingString(agentId, data)
-        //xmppSession.Send(xml)
+        let objData = parser_x2j.parse(data)
+        let xml = ``
+        if('user' in objData) { 
+            objData.user.dialogs = `/finesse/api/User/${agentId}/Dialogs`
+            objData.user.extension = extension
+            objData.user.loginId = agentId
+            objData.user.loginName = agentId
+            objData.user.uri = `/finesse/api/User/${agentId}`
+            xml = xmlFormat.XmppUserEventFormatUsingObject(agentId, objData)
+        }
+        else if ('Dialog' in objData){
+            objData.Dialog.fromAddress = fromAddress
+            let CallVariables = objData.Dialog.mediaProperties.callvariables.CallVariable
+            for(idx in CallVariables){
+                if(CallVariables[idx].name == 'callVariable4'){
+                    let defaultString = '_'.repeat(16)
+                    let reserved = '_'.repeat(8)
+                    let callingAddress = (fromAddress + defaultString).slice(0, 16)
+                    let billingAddress = (fromAddress + defaultString).slice(0, 16)
+                    CallVariables[idx].value = callingAddress + billingAddress + reserved
+                }
+            }
+            objData.Dialog.fromAddress = fromAddress
+            for(idx in objData.Dialog.participants.Participant){
+                if(objData.Dialog.participants.Participant[idx].mediaAddressType == 'AGENT_DEVICE'){
+                    objData.Dialog.participants.Participant[idx].mediaAddress = extension
+                }
+                else {
+                    objData.Dialog.participants.Participant[idx].mediaAddress = fromAddress
+                }
+            }
+            xml = xmlFormat.XmppDialogEventFormatUsingObject(agentId, objData)
+        }
+        let xmppSession = FinesseMemory.get_xmpp(agentId)
+        if(xmppSession) xmppSession.send(xml)
         return res.contentType('xml').status(202).send(xml)
     }
     return res.sendStatus(200)

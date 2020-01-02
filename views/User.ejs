@@ -3,10 +3,10 @@
 
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script type="text/javascript" src="http://192.168.0.25:3000/public/xml2json.js"></script>
-    <script type="text/javascript" src="http://192.168.0.25:3000/public/json2xml.js"></script>
-    <script type="text/javascript" src="http://192.168.0.25:3000/public/finesseRestApi.js"></script>
-    <script type="text/javascript" src="http://192.168.0.25:3000/public/jquery.serialize-object.js"></script>
+    <script type="text/javascript" src="http://192.168.0.207:3000/public/xml2json.js"></script>
+    <script type="text/javascript" src="http://192.168.0.207:3000/public/json2xml.js"></script>
+    <script type="text/javascript" src="http://192.168.0.207:3000/public/finesseRestApi.js"></script>
+    <script type="text/javascript" src="http://192.168.0.207:3000/public/jquery.serialize-object.js"></script>
     <meta charset="UTF-8">
     <title>SimFinesse</title>
     <!-- <link rel="stylesheet" href="stylesheets/style.css" /> -->
@@ -25,7 +25,7 @@
             subId.value = objUser.User.loginId
         })
         async function sendSelect(id){
-            let objUser = await GetUri_SetElement(`http://192.168.0.25:3000/finesse/api/User/${id}`, 'mainDiv')
+            let objUser = await GetUri_SetElement(`http://192.168.0.207:3000/finesse/api/User/${id}`, 'mainDiv')
             ElementSettingFromObject(objUser, 'mainDiv')
             document.getElementById('subId').value = id
         }
@@ -35,7 +35,7 @@
                 return
             }
             let formObject = $("#mainForm").serializeObject()
-            await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/User/${id}`, 'post', formObject)
+            await PostPutDialogUri(`http://192.168.0.207:3000/finesse/api/User/${id}`, 'post', formObject)
         }
         async function sendUpdate(id){
             if(isNaN(id) == true){
@@ -43,14 +43,14 @@
                 return
             }
             let formObject = $("#mainForm").serializeObject()
-            await PostPutDialogUri(`http://192.168.0.25:3000/finesse/api/User/${id}`, 'put', formObject)
+            await PostPutDialogUri(`http://192.168.0.207:3000/finesse/api/User/${id}`, 'put', formObject)
         }
         async function sendDelete(id){
             if(isNaN(id) == true){
                 alert('fail : User 숫자만')
                 return
             }
-            await DeleteDialogUri(`http://192.168.0.25:3000/finesse/api/User/${id}`)
+            await DeleteDialogUri(`http://192.168.0.207:3000/finesse/api/User/${id}`)
         }
     </script>
     <form id='mainForm' action='' method="POST" name="form">

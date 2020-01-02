@@ -7,16 +7,7 @@ const asyncFile = require('../../../file/asyncFile')
 const expressAsyncHandler = require('express-async-handler')
 const _path = require('path')
 
-
-
 router.get('/' , expressAsyncHandler( async (req, res) => {
-    // UsersElements = await getElementsFromFileList('User', '상담사', 700, 1000, 100, 50)
-    // DialogsElements = await getElementsFromFileList('Dialog', '다이얼로그', 1000, 1500, 100, 50)
-
-    // return res.render(`Scenario`, { 
-    //     UsersElements : UsersElements,
-    //     DialogsElements : DialogsElements,
-    // })
     return res.render(`Scenario`)
 
 }))

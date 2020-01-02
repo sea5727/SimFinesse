@@ -13,15 +13,47 @@
             {
                 "Name": "1차호 시나리오",
                 "Events": [
-                    "ALERTING",
-                    "ACTIVE"
+                    {
+                        "type": "User",
+                        "name": "RESERVED"
+                    },
+                    {
+                        "type": "Dialog",
+                        "name": "ALERTING"
+                    },
+                    {
+                        "type": "User",
+                        "name": "TALKING"
+                    },
+                    {
+                        "type": "Dialog",
+                        "name": "ACTIVE"
+                    },
+                    {
+                        "type": "Dialog",
+                        "name": "DROPPED"
+                    },
+                    {
+                        "type": "User",
+                        "name": "WORK_READY"
+                    },
+                    {
+                        "type": "User",
+                        "name": "READY"
+                    }
                 ]
             },
             {
                 "Name": "2차호 시나리오",
                 "Events": [
-                    "ALERTING",
-                    "ACTIVE"
+                    {
+                        "type": "Dialog",
+                        "name": "ALERTING"
+                    },
+                    {
+                        "type": "Dialog",
+                        "name": "ACTIVE"
+                    }
                 ]
             }
         ]
