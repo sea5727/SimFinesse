@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/sea5727/SimFinesse#readme",
   "dependencies": {
-    "body-parser-xml": "^1.1.0",
+    "body-parser-xml": "^2.0.3",
     "commander": "^4.0.1",
     "dateformat": "^3.0.3",
     "deepmerge": "^4.2.2",
